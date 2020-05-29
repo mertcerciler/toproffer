@@ -31,16 +31,6 @@ class RestaurantsActiveCampaigns extends StatefulWidget {
 }
 
 class _RestaurantsActiveCampaigns extends State<RestaurantsActiveCampaigns> {
-  // List<CampaignModel> get _recentTransactions {
-  //   return _userTransactions.where((tx) {
-  //     return tx.campaignStarted.isAfter(
-  //       DateTime.now().subtract(
-  //         Duration(days: 7),
-  //       ),
-  //     );
-  //   }).toList();
-  // }
-
   Future<void> _signOut(BuildContext context) async {
     try {
       final auth = Provider.of<AuthBase>(context, listen: false);
@@ -65,7 +55,7 @@ class _RestaurantsActiveCampaigns extends State<RestaurantsActiveCampaigns> {
 
   int _selectedIndex = 0;
   void selectGenerator(BuildContext ctx) {
-    Navigator.of(ctx).push(
+    Navigator.of(ctx).pushReplacement(
       MaterialPageRoute(
         builder: (_) {
           return CampaignCreatorPage(database: widget.database);
@@ -75,7 +65,7 @@ class _RestaurantsActiveCampaigns extends State<RestaurantsActiveCampaigns> {
   }
 
   void selectHistory(BuildContext context) {
-    Navigator.of(context).push(
+    Navigator.of(context).pushReplacement(
       MaterialPageRoute(
         builder: (_) {
           return RestaurantStatistics();
@@ -93,7 +83,9 @@ class _RestaurantsActiveCampaigns extends State<RestaurantsActiveCampaigns> {
         selectGenerator(context);
       } else if (_selectedIndex == 2) {
         selectHistory(context);
-      } else if (_selectedIndex == 3) {}
+      } else if (_selectedIndex == 3) {
+
+      }
     });
   }
 
@@ -235,9 +227,9 @@ class _RestaurantsActiveCampaigns extends State<RestaurantsActiveCampaigns> {
           ),
           BottomNavigationBarItem(
             icon: Icon(
-              Icons.history,
+              Icons.insert_chart,
             ),
-            title: Text('History'),
+            title: Text('Statistics'),
           ),
           BottomNavigationBarItem(
             icon: Icon(

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:login/app/home/models/campaign_model.dart';
 import 'package:login/app/home/restaurant_active_campaigns.dart';
+import 'package:login/app/home/restaurant_statistics.dart';
 import 'dart:async';
-import 'dart:convert';
 import 'dart:math';
 import 'package:provider/provider.dart';
 import 'package:login/app/services/database.dart';
@@ -31,10 +31,11 @@ class _CampaignCreatorPage extends State<CampaignCreatorPage> {
   final oldPriceController = TextEditingController();
   final newPriceController = TextEditingController();
   final durationController = TextEditingController();
-  final startingHourController = TextEditingController();
-  final endingHourController = TextEditingController();
+  TimeOfDay startingHour = TimeOfDay.now();
+  TimeOfDay endingHour = TimeOfDay.now();
   static int selectedDurationHour = 0;
   static int selectedDurationMinutes = 0;
+  List<String> campaignDays;
   Duration duration = new Duration(
       hours: selectedDurationHour, minutes: selectedDurationMinutes);
   Timer _timerCampaign;
@@ -59,6 +60,31 @@ class _CampaignCreatorPage extends State<CampaignCreatorPage> {
     }
   }
 
+  TimeOfDay _now = TimeOfDay.now();
+  TimeOfDay picked;
+
+  selectStartingHour(BuildContext context) async {
+    picked = await showTimePicker(context: context, initialTime: _now);
+    changeStartingHour(); 
+  }
+  changeStartingHour(){
+    setState(() {
+      startingHour = picked;
+    });
+  }
+
+  TimeOfDay pickedEnding;
+
+  selectEndingHour(BuildContext context) async {
+    pickedEnding = await showTimePicker(context: context, initialTime: _now);
+    changeEndingHour(); 
+  }
+  changeEndingHour(){
+    setState(() {
+      endingHour = pickedEnding;
+    });
+  }
+
   _showPickerNumber(BuildContext context) async {
     new Picker(
         adapter: NumberPickerAdapter(data: [
@@ -73,7 +99,41 @@ class _CampaignCreatorPage extends State<CampaignCreatorPage> {
             child: Icon(Icons.more_vert),
           ))
         ],
+        footer: new Row(
+          children:[ 
+            SizedBox(width: 35),
+            SizedBox(height: 10),
+            Text('hours                 minutes')]),
         hideHeader: true,
+        title: new Text("Please Select"),
+        onConfirm: (Picker picker, List value) {
+          setState(() {
+            selectedDurationHour = value[0];
+            selectedDurationMinutes = value[1];
+            duration = new Duration(
+                hours: selectedDurationHour, minutes: selectedDurationMinutes);
+          });
+        }).showDialog(context);
+  }
+
+  _showPickerStartingTime(BuildContext context) async {
+    new Picker(
+        
+        adapter: NumberPickerAdapter(
+          data: [
+          NumberPickerColumn(begin: 0, end: 23, suffix: Text('hours')),
+          NumberPickerColumn(begin: 0, end: 59, suffix: Text('minutes')),
+        ]),
+        delimiter: [
+          PickerDelimiter(
+              child: Container(
+            width: 30.0,
+            alignment: Alignment.center,
+            child: Icon(Icons.more_vert),
+          ))
+        ],
+        hideHeader: true,
+        
         title: new Text("Please Select"),
         onConfirm: (Picker picker, List value) {
           setState(() {
@@ -95,35 +155,30 @@ class _CampaignCreatorPage extends State<CampaignCreatorPage> {
     return restaurantName['restaurant_address'];
   }
 
-  final Random _random = Random.secure();
-  String createCryptoRandomString([int length = 6]) {
-    var values = List<int>.generate(length, (i) => _random.nextInt(256));
-    return base64Url.encode(values);
+  String createRandomInteger() {
+    var rng = new Random();
+    int rand =  rng.nextInt(99999);
+    return rand.toString();
   }
 
   Future<void> submitData() async {
     final enteredContent = contentController.text;
     final enteredOldPrice = double.parse(oldPriceController.text);
     final enteredNewPrice = double.parse(newPriceController.text);
-    var startingHour;
-    var endingHour;
     DateTime now = DateTime.now();
     DateTime campaignFinished = now.add(duration);
 
     String restaurantName = await getRestaurantName();
     String restaurantAddress = await getRestaurantAddress();
 
-    String code = createCryptoRandomString(5);
+    String code = createRandomInteger();
     print(dropdownValue);
 
     if (dropdownValue == 'Permanent Campaign') {
-      startingHour = double.parse(startingHourController.text);
-      endingHour = double.parse(endingHourController.text);
+     
       if (enteredContent.isEmpty ||
           enteredOldPrice <= 0 ||
-          enteredNewPrice <= 0 ||
-          startingHour <= 0 ||
-          endingHour <= 0) {
+          enteredNewPrice <= 0){
         return;
       }
     }
@@ -145,10 +200,11 @@ class _CampaignCreatorPage extends State<CampaignCreatorPage> {
         oldPrice: enteredOldPrice,
         newPrice: enteredNewPrice,
         campaignType: 'Permanent',
+        campaignDays: campaignDays,
         campaignCategory1: campaignCategory1,
         campaignCategory2: campaignCategory2,
-        startingHour: startingHour,
-        endingHour: endingHour,
+        startingHour: startingHour.toString(),
+        endingHour: endingHour.toString(),
         code: code,
       );
       try {
@@ -158,7 +214,7 @@ class _CampaignCreatorPage extends State<CampaignCreatorPage> {
       } catch (e) {
         rethrow;
       }
-      Navigator.of(context).pop();
+      selectRestaurantActiveCampaigns(context);
     } else {
       CampaignModel campaign = CampaignModel(
         id: now.toIso8601String(),
@@ -181,7 +237,7 @@ class _CampaignCreatorPage extends State<CampaignCreatorPage> {
       } catch (e) {
         rethrow;
       }
-      Navigator.of(context).pop();
+      selectRestaurantActiveCampaigns(context);
     }
   }
 
@@ -190,10 +246,20 @@ class _CampaignCreatorPage extends State<CampaignCreatorPage> {
 
   int _selectedIndex = 1;
   void selectRestaurantActiveCampaigns(BuildContext ctx) {
-    Navigator.of(ctx).push(
+    Navigator.of(ctx).pushReplacement(
       MaterialPageRoute(
         builder: (_) {
           return RestaurantsActiveCampaigns(database: widget.database);
+        },
+      ),
+    );
+  }
+
+  void selectStatistics(BuildContext ctx) {
+    Navigator.of(ctx).pushReplacement(
+      MaterialPageRoute(
+        builder: (_) {
+          return RestaurantStatistics(database: widget.database);
         },
       ),
     );
@@ -207,6 +273,7 @@ class _CampaignCreatorPage extends State<CampaignCreatorPage> {
       if (_selectedIndex == 0) {
         selectRestaurantActiveCampaigns(context);
       } else if (_selectedIndex == 2) {
+        selectStatistics(context);
       } else if (_selectedIndex == 3) {}
     });
   }
@@ -385,34 +452,30 @@ class _CampaignCreatorPage extends State<CampaignCreatorPage> {
                                     "Friday",
                                     "Saturday",
                                   ],
-                                  onSelected: (List<String> checked) =>
-                                      print(checked.toString())),
+                                  onSelected: (List<String> checked) {setState(() {
+                                    campaignDays = checked;
+                                  });}
+                                      ),
                               SizedBox(
                                 height: 12,
                               ),
-                              TextField(
-                                decoration:
-                                    InputDecoration(labelText: 'Starting Hour'),
-                                controller: startingHourController,
-                                keyboardType: TextInputType.numberWithOptions(
-                                  decimal: true,
-                                ),
-                                onSubmitted: (_) => submitData(),
-                              ),
-                              TextField(
-                                decoration:
-                                    InputDecoration(labelText: 'Ending Hour'),
-                                controller: endingHourController,
-                                keyboardType: TextInputType.numberWithOptions(
-                                  decimal: true,
-                                ),
-                                onSubmitted: (_) => submitData(),
-                              )
+                              ListTile(
+                                title: Text('Select Starting Hour'),
+                                subtitle: Text('You selected ${startingHour.hour}:${startingHour.minute}'),
+                                trailing: Icon(Icons.keyboard_arrow_down),
+                                onTap: () => selectStartingHour(context),
+                          ),
+                              ListTile(
+                                title: Text('Select Ending Hour'),
+                                subtitle: Text('You selected ${endingHour.hour}:${endingHour.minute}'),
+                                trailing: Icon(Icons.keyboard_arrow_down),
+                                onTap: () => selectEndingHour(context),
+                          ),
                             ],
                           )
                         : ListTile(
                             title: Text('Select Duration'),
-                            subtitle: Text('You Select 1 hour 30 min'),
+                            subtitle: Text('You selected $selectedDurationHour hour(s) $selectedDurationMinutes minutes'),
                             trailing: Icon(Icons.keyboard_arrow_down),
                             onTap: () => _showPickerNumber(context),
                           ),
@@ -453,9 +516,9 @@ class _CampaignCreatorPage extends State<CampaignCreatorPage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(
-              Icons.done_all,
+              Icons.insert_chart,
             ),
-            title: Text('Confirmation'),
+            title: Text('Statistics'),
           ),
           BottomNavigationBarItem(
             icon: Icon(

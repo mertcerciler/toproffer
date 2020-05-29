@@ -16,7 +16,8 @@ class RestaurantCampaignList extends StatefulWidget {
 }
 class _RestaurantCampaignList  extends State<RestaurantCampaignList > {
   Duration duration;
-  
+  bool checkDuration = false;
+
   _showDuration(int index) {
     Timer _timerCampaign;
     DateTime now = DateTime.now().toLocal();
@@ -26,12 +27,21 @@ class _RestaurantCampaignList  extends State<RestaurantCampaignList > {
       if (!mounted) return;
       setState(() {
         if((duration - oneSec).inSeconds < 1) {
-          _timerCampaign.cancel();      
+          checkDuration = true;
+          removeCampaign(index);
+          _timerCampaign.cancel();
+             
         }
         else {
           duration = duration - oneSec;
         }
     });});
+  }
+
+  removeCampaign(int index) async{
+    if(checkDuration == true){
+      await widget.database.deleteCampaign(widget.campaign[index]);
+    }
   }
 
   void _navigateCampaignDetails(BuildContext context, CampaignModel campaign) {
@@ -160,7 +170,7 @@ class _RestaurantCampaignList  extends State<RestaurantCampaignList > {
                                         Row(
                                           children: <Widget>[
                                             Text(
-                                              '\$${widget.campaign[index].oldPrice}',
+                                              '\$${widget.campaign[index].oldPrice.toStringAsFixed(2)}',
                                               style: new TextStyle(
                                                   color: Colors.black,
                                                   decoration: TextDecoration
@@ -168,7 +178,7 @@ class _RestaurantCampaignList  extends State<RestaurantCampaignList > {
                                                   fontSize: 15),
                                             ),
                                             Text(
-                                              ' --> \$${widget.campaign[index].newPrice}',
+                                              ' --> \$${widget.campaign[index].newPrice.toStringAsFixed(2)}',
                                               style: TextStyle(
                                                 fontSize: 15,
                                               ),
@@ -290,19 +300,31 @@ class _RestaurantCampaignList  extends State<RestaurantCampaignList > {
                                         Container(
                                           alignment: Alignment.center,
                                           child: Text(
-                                            "Fast Food",
+                                            "${widget.campaign[index].campaignCategory1}",
                                             style: TextStyle(
                                               fontSize: 15,
                                             ),
                                           ),
                                         ),
+                                        widget.campaign[index].campaignCategory2.contains("null") ? 
+                                        Container(
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            "${widget.campaign[index].campaignCategory2}",
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                            ),
+                                          ),
+                                        )
+                                        :
+                                        Container(),
                                         SizedBox(
                                           height: 8,
                                         ),
                                         Row(
                                           children: <Widget>[
                                             Text(
-                                              '\$${widget.campaign[index].oldPrice}',
+                                              '\$${widget.campaign[index].oldPrice.toStringAsFixed(2)}',
                                               style: new TextStyle(
                                                   color: Colors.black,
                                                   decoration: TextDecoration
@@ -310,7 +332,7 @@ class _RestaurantCampaignList  extends State<RestaurantCampaignList > {
                                                   fontSize: 15),
                                             ),
                                             Text(
-                                              ' --> \$${widget.campaign[index].newPrice}',
+                                              ' --> \$${widget.campaign[index].newPrice.toStringAsFixed(2)}',
                                               style: TextStyle(
                                                 fontSize: 15,
                                               ),
@@ -321,7 +343,7 @@ class _RestaurantCampaignList  extends State<RestaurantCampaignList > {
                                             ),
                                     
                                             Text(
-                                              '${widget.campaign[index].startingHour}-${widget.campaign[index].endingHour}',
+                                              '${widget.campaign[index].startingHour.substring(10,12)}:${widget.campaign[index].startingHour.substring(13,15)} - ${widget.campaign[index].endingHour.substring(10,12)}:${widget.campaign[index].endingHour.substring(13,15)}',
                                               style: TextStyle(
                                                 fontSize: 15,
                                               ),

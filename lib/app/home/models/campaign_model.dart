@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class CampaignModel { 
   CampaignModel({
     this.id,
@@ -12,6 +14,7 @@ class CampaignModel {
     this.startingHour,
     this.restaurantAddress,
     this.endingHour,
+    this.campaignDays,
     this.campaignStarted,
     this.campaignFinished,
     this.code,
@@ -24,8 +27,9 @@ class CampaignModel {
   final String campaignCategory2;
   final String campaignType;
   final double newPrice;
-  final double startingHour;
-  final double endingHour;
+  final String startingHour;
+  final String endingHour;
+  final List<String> campaignDays;
   final String restaurantAddress;
   final DateTime campaignFinished;
   final DateTime campaignStarted;
@@ -75,6 +79,7 @@ class CampaignModel {
       final DateTime startingHour = data['starting_hour'];
       final String restaurantAddress = data['restaurantAddress'];
       final DateTime endingHour = data['ending_hour'];
+      final List<String> campaignDays = data['campaign_days'];
       final DateTime releaseDate = data['releaseDate'];
       final String campaignCategory1 = data['campaign_category_1'];
       final String campaignCategory2 = data['campaign_category_2'];
@@ -88,6 +93,7 @@ class CampaignModel {
         oldPrice:  oldPrice,
         releaseDate: releaseDate,
         restaurantAddress: restaurantAddress,
+        campaignDays: campaignDays,
         campaignStarted: startingHour,
         campaignFinished: endingHour,
         campaignCategory1: campaignCategory1,
@@ -107,6 +113,7 @@ class CampaignModel {
         'campaign_category_1': campaignCategory1,
         'campaign_category_2': campaignCategory2,
         'restaurant_address': restaurantAddress,
+        'campaign_days': campaignDays,
         'oldPrice': oldPrice,
         'newPrice': newPrice,
         'releaseTime': DateTime.now(),
@@ -142,8 +149,9 @@ class CampaignModel {
     String campaignCategory2,
     String campaignType,
     double newPrice,
-    double startingHour,
-    double endingHour,
+    String campaignDays,
+    String startingHour,
+    String endingHour,
     String restaurantAddress,
     DateTime campaignStarted,
     DateTime campaignFinished,
@@ -158,6 +166,7 @@ class CampaignModel {
       campaignCategory1: campaignCategory1 ?? this.campaignCategory1,
       campaignCategory2: campaignCategory2 ?? this.campaignCategory2,
       campaignType: campaignType ?? this.campaignType,
+      campaignDays: campaignDays ?? this.campaignDays,
       startingHour: startingHour ?? this.startingHour,
       restaurantAddress: restaurantAddress ?? this.restaurantAddress,
       endingHour: endingHour ?? this.endingHour,

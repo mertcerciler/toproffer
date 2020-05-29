@@ -238,6 +238,12 @@ class FirestoreDatabase implements Database {
       );
     }
   }
+  Future<List<Map<String, dynamic>>> getUsedCampaigns() async {
+    final path = APIPath.get_total_used_campaigns();
+    final reference = Firestore.instance.collection(path);
+    final snapshots = reference.snapshots();
+    List<Map<String, dynamic>> list = [];
+  }
 
   Future<List<Map<String, dynamic>>> getCoordinates() async {
     final path = APIPath.get_all_restaurants();
@@ -249,7 +255,6 @@ class FirestoreDatabase implements Database {
           {'id': snapshot.data['id']}  
     ).toList());
     var id = await map.first; 
-    print('id is: $id');
     int index = 0;
     while (index < id.length) {
       var id_1 = id[index]['id'];
@@ -260,7 +265,6 @@ class FirestoreDatabase implements Database {
         (snapshot) =>snapshot.exists 
       ).toString());
       final isExist = await map_2.first;
-      print('isExist: $isExist');
       if (isExist.contains('true')) {
         final path = APIPath.get_restaurant_details(id_1);
         final reference = Firestore.instance.collection(path);

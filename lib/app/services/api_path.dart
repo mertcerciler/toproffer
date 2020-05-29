@@ -51,6 +51,9 @@ class APIPath {
   static String total_used_campaigns(String cid) =>
     'total_used_campaigns/$cid';
 
+  static String get_total_used_campaigns() =>
+    'total_used_campaigns/';
+
   static String total_active_campaigns(String cid) => 
     'total_active_campaigns/$cid';
 

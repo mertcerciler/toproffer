@@ -1,8 +1,53 @@
 import 'package:flutter/material.dart';
+import 'package:login/app/services/database.dart';
 import './models/sales_data.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 
-class RestaurantStatistics extends StatelessWidget {
+import 'campaign_creator_page.dart';
+
+class RestaurantStatistics extends StatefulWidget {
+  const RestaurantStatistics({Key key, this.database}) : super(key: key);
+  final Database database;
+
+  
+  @override
+  _RestaurantStatistics createState() => _RestaurantStatistics();
+}
+class _RestaurantStatistics extends State<RestaurantStatistics>{
+  int _selectedIndex = 2;
+  void selectGenerator(BuildContext ctx) {
+    Navigator.of(ctx).pushReplacement(
+      MaterialPageRoute(
+        builder: (_) {
+          return CampaignCreatorPage(database: widget.database);
+        },
+      ),
+    );
+  }
+
+  void selectHistory(BuildContext context) {
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (_) {
+          return RestaurantStatistics();
+        },
+      ),
+    );
+  }
+
+//-----------------------------------
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+      print("index is: $index");
+      if (_selectedIndex == 1) {
+        selectGenerator(context);
+      } else if (_selectedIndex == 2) {
+        selectHistory(context);
+      } else if (_selectedIndex == 3) {
+      }
+    });
+  }
   // Defining the data
   final data = [
     new SalesData(0, 1500000),
@@ -90,6 +135,40 @@ class RestaurantStatistics extends StatelessWidget {
               ),
             ),
           ),
-        ));
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        unselectedItemColor: Colors.white,
+        backgroundColor: Colors.blue,
+        items: <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.format_list_bulleted,
+            ),
+            title: Text('My Campaigns'),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.extension,
+            ),
+            title: Text('Generator'),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.insert_chart,
+            ),
+            title: Text('Statistics'),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.person_outline,
+            ),
+            title: Text('Profile'),
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.black54,
+        onTap: _onItemTapped,
+      ),);
     }
 }
