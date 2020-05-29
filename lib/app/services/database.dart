@@ -113,29 +113,21 @@ class FirestoreDatabase implements Database {
 
   Stream<String> getCode(CampaignModel campaign) {
     var code;
-    final path = APIPath.get_total_active_campaigns();
-    final reference = Firestore.instance.collection(path);
+    print(campaign.id);
+    final path = APIPath.delete_active_campaigns(uid, campaign.id);
+    final reference = Firestore.instance.document(path);
     final snapshots = reference.snapshots();
-    return snapshots.map((snapshot) => snapshot.documents.map(
-      (snapshot) { 
-        return snapshot['code']; 
-      }
-    ).toString());
+    return snapshots.map((snapshot) => snapshot.data['code']);
   }
 
   Future<String> getCodeFuture(CampaignModel campaign) async {
     var code;
-    final path = APIPath.get_total_active_campaigns();
-    final reference = Firestore.instance.collection(path);
+    final path = APIPath.total_active_campaigns(campaign.id);
+    final reference = Firestore.instance.document(path);
     final snapshots = reference.snapshots();
-    final map =  snapshots.map((snapshot) => snapshot.documents.map(
-      (snapshot) { 
-        return snapshot['code']; 
-      }
-    ).toString());
+    final map =  snapshots.map((snapshot) => snapshot.data['code']);
     code = await map.first;
     return code;
-
   }
 
   final Random _random = Random.secure();
@@ -294,6 +286,7 @@ class FirestoreDatabase implements Database {
       (snapshot) {
         if (snapshot.data['campaign_type'] == "Momentarily"){ 
           return CampaignModel(
+            id: snapshot.data['id'],
             title: snapshot.data['title'],
             content: snapshot.data['content'],
             campaignCategory1: snapshot.data['campaign_category_1'],
@@ -307,6 +300,7 @@ class FirestoreDatabase implements Database {
           );
         } else {
           return CampaignModel(
+            id: snapshot.data['id'],
             title: snapshot.data['title'],
             content: snapshot.data['content'],
             campaignCategory1: snapshot.data['campaign_category_1'],
@@ -367,6 +361,7 @@ class FirestoreDatabase implements Database {
       (snapshot) {
         if (snapshot.data['campaign_type'] == "Momentarily"){ 
           return CampaignModel(
+            id: snapshot.data['id'],
             title: snapshot.data['title'],
             content: snapshot.data['content'],
             campaignCategory1: snapshot.data['campaign_category_1'],
@@ -379,6 +374,7 @@ class FirestoreDatabase implements Database {
           );
         } else {
           return CampaignModel(
+            id: snapshot.data['id'],
             title: snapshot.data['title'],
             content: snapshot.data['content'],
             campaignCategory1: snapshot.data['campaign_category_1'],

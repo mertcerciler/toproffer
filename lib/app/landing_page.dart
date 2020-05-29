@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:login/app/home/restaurant_settings.dart';
 import 'package:login/app/services/auth.dart';
 import 'package:login/app/services/database.dart';
 import 'package:login/app/sign_in/signin_page.dart';

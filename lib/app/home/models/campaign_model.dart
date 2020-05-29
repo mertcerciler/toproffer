@@ -1,7 +1,4 @@
-
-
-class CampaignModel {
-  
+class CampaignModel { 
   CampaignModel({
     this.id,
     this.title,
@@ -41,10 +38,10 @@ class CampaignModel {
       return null;
     }
     if (data['campaign_type'] == "Momentarily"){
+      final String id = data['id'];
       final String title = data['title'];
       final String content = data['content'];
       final String campaignType =  data['campaign_type'];
-
       final double newPrice =  data['newPrice'];
       final double oldPrice  = data['oldPrice'];
       final String restaurantAddress = data['restaurantAddress'];
@@ -54,7 +51,7 @@ class CampaignModel {
       final String campaignCategory2 = data['campaign_category_2'];
       final String code = data['code'];
       return CampaignModel(
-        id: campaignId,
+        id: id,
         title: title,
         content: content,
         campaignType: 'Momentarily',
@@ -69,6 +66,7 @@ class CampaignModel {
       );
     }
     else {
+      final String id = data['id'];
       final String title = data['title'];
       final String content = data['content'];
       final String campaignType =  data['campaign_type'];
@@ -82,7 +80,7 @@ class CampaignModel {
       final String campaignCategory2 = data['campaign_category_2'];
       final String code = data['code'];
       return CampaignModel(
-        id: campaignId,
+        id: id,
         title: title,
         content: content,
         campaignType: 'Permanent',
@@ -119,6 +117,7 @@ class CampaignModel {
     }
     else {
       return {
+        'id': id,
         'title': title,
         'content': content,
         'campaign_type': 'Momentarily',
@@ -135,6 +134,7 @@ class CampaignModel {
   }
 
   CampaignModel copyWith({
+    String id,
     String title,
     String content,
     double oldPrice,
@@ -150,6 +150,7 @@ class CampaignModel {
     String code,
   }) {
     return CampaignModel(
+      id: id ?? this.id,
       title: title ?? this.title,
       content: content ?? this.content,
       oldPrice: oldPrice ?? this.oldPrice,

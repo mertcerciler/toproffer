@@ -25,7 +25,6 @@ class _CampaignDetailsCustomerPage extends State<CampaignDetailsCustomerPage> {
 
   Future<void> submitCode() async {
     var code = await widget.database.getCodeFuture(widget.campaign);
-    code = code.substring(1,code.length-1);
     final codeText = codeInputController.text;
     print('code text is $codeText, code is $code');
     if(codeText == code){

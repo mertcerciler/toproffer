@@ -10,6 +10,7 @@ import 'package:login/common_widgets/platform_alert_dialog.dart';
 import 'package:provider/provider.dart';
 import 'lists/restaurant_active_campaigns_list_2.dart';
 import 'lists/restaurant_history_campaigns_list.dart';
+import 'restaurant_statistics.dart';
 
 class RestaurantsActiveCampaigns extends StatefulWidget {
   RestaurantsActiveCampaigns({Key key, this.title, @required this.database})
@@ -77,7 +78,7 @@ class _RestaurantsActiveCampaigns extends State<RestaurantsActiveCampaigns> {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) {
-          return RestaurantHistoryCampaigns(database: widget.database);
+          return RestaurantStatistics();
         },
       ),
     );
