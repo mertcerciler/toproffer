@@ -1,0 +1,77 @@
+{
+  "project_info": {
+    "project_number": "133773714509",
+    "firebase_url": "https://toproffer-deneme.firebaseio.com",
+    "project_id": "toproffer-deneme",
+    "storage_bucket": "toproffer-deneme.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:133773714509:android:b0419c1b8f5644592da804",
+        "android_client_info": {
+          "package_name": "com.example.login"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "133773714509-u2f2blmf7o6mltml369k3h3m19548g2l.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.login",
+            "certificate_hash": "571f44735d0f4b4b90d4b34e5c9ca9d26adb2c7b"
+          }
+        },
+        {
+          "client_id": "133773714509-bjook92h2k65sjjuv17ncgt8m1fhnlcf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAfYCOmyO0vJLa98gnJCjiajCJdrOT765Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "133773714509-bjook92h2k65sjjuv17ncgt8m1fhnlcf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:133773714509:android:da1c9195b6dfeb0a2da804",
+        "android_client_info": {
+          "package_name": "com.toproffer.toproffer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "133773714509-bjook92h2k65sjjuv17ncgt8m1fhnlcf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAfYCOmyO0vJLa98gnJCjiajCJdrOT765Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "133773714509-bjook92h2k65sjjuv17ncgt8m1fhnlcf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

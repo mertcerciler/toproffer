@@ -1,0 +1,186 @@
+import 'package:flutter/material.dart';
+import 'package:login/app/home/campaign_creator_page.dart';
+import 'package:login/app/home/lists/list_item_builder.dart';
+import 'package:login/app/home/models/campaign_model.dart';
+import 'package:login/app/home/restaurant_active_campaigns.dart';
+import 'package:login/app/home/restaurant_list.dart';
+import 'package:login/app/services/auth.dart';
+import 'package:login/app/services/database.dart';
+import 'package:login/common_widgets/platform_alert_dialog.dart';
+import 'package:provider/provider.dart';
+import 'lists/restaurant_active_campaigns_list_2.dart';
+import 'lists/restaurant_history_campaigns_list.dart';
+
+class RestaurantHistoryCampaigns extends StatefulWidget {
+  RestaurantHistoryCampaigns({Key key, this.title, @required this.database}) : super(key: key);
+  final String title;
+  final Database database;
+
+  static Future<void> show(BuildContext context) async {
+    final database = Provider.of<Database>(context, listen: false);
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => RestaurantHistoryCampaigns(database: database),
+        fullscreenDialog: true,
+      )
+    );
+  }
+  @override
+  _RestaurantHistoryCampaigns createState() => _RestaurantHistoryCampaigns();
+}
+
+class _RestaurantHistoryCampaigns extends State<RestaurantHistoryCampaigns> {
+
+  // List<CampaignModel> get _recentTransactions {
+  //   return _userTransactions.where((tx) {
+  //     return tx.campaignStarted.isAfter(
+  //       DateTime.now().subtract(
+  //         Duration(days: 7),
+  //       ),
+  //     );
+  //   }).toList();
+  // }
+  
+  
+  Future<void> _signOut(BuildContext context) async {
+    try {
+      final auth = Provider.of<AuthBase>(context, listen: false);
+      await auth.signOut();    
+    }
+    catch(e) {
+      print(e.toString());
+    }
+  } 
+  
+  Future<void> _confirmSignOut(BuildContext context) async {
+    final didRequestSignOut = await PlatformAlertDialog(
+      title: 'Logout',
+      content: 'Are you sure that you want to logout', 
+      cancelActionText: 'Cancel',
+      defaultActionText: 'Logout'
+    ).show(context);
+    if (didRequestSignOut == true) {
+      print('Mert');
+      _signOut(context);
+    }
+  }
+  int _selectedIndex = 2;
+  void selectGenerator(BuildContext ctx) {
+    Navigator.of(ctx).push(
+      MaterialPageRoute(
+        builder: (_) {
+          return CampaignCreatorPage(database: widget.database);
+        },
+      ),
+    );
+  }
+
+  void selectActive(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) {
+          return RestaurantsActiveCampaigns(database: widget.database);
+        },
+      ),
+    );
+  }
+
+//-----------------------------------
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+      print("index is: $index");
+      if(_selectedIndex == 1){
+        selectGenerator(context);
+      }else if(_selectedIndex == 0){
+        selectActive(context);
+      }else if(_selectedIndex == 3){
+        
+      }
+    });
+  }
+
+  Widget _buildContents(BuildContext context) {
+     return StreamBuilder<List<CampaignModel>>(
+       stream: widget.database.campaignHistoryStream(),
+       builder: (context, snapshot) {
+        return ListItemBuilder<CampaignModel>(
+          snapshot: snapshot,
+          itemBuilder: (context, campaign) => RestaurantHistoryCampaignList(
+            campaign: campaign,
+            database: widget.database,
+          )
+        );
+      },
+    );
+  }
+  @override
+  Widget build(BuildContext context) {
+    return new Scaffold(
+      appBar: AppBar(
+        title: Text("My Campaigns Page"),
+        actions: <Widget>[
+         FlatButton(
+            child: Text(
+              'Logout', 
+              style: TextStyle(
+                fontSize: 18.0,
+                color: Colors.white
+              ),
+            ),
+            onPressed: () => _confirmSignOut(context),
+          ),],
+      ),
+      body:
+          Container(
+            child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                _buildContents(context),
+              ],
+          ),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+        onPressed: () => CampaignCreatorPage.show(context)
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        unselectedItemColor: Colors.white,
+        backgroundColor: Colors.blue,
+        items: <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.format_list_bulleted,
+            ),
+            title: Text('My Campaigns'),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.extension,
+            ),
+            title: Text('Generator'),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.history,
+            ),
+            title: Text('History'),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.person_outline,
+            ),
+            title: Text('Profile'),
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.black54,
+        onTap: _onItemTapped,
+      ),
+    );
+  }
+}
