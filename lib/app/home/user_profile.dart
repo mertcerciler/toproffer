@@ -9,39 +9,34 @@ import 'package:login/common_widgets/platform_alert_dialog.dart';
 import 'dart:ui';
 import 'lists/list_item_builder.dart';
 import 'lists/restaurant_active_campaigns_list_2.dart';
-import 'user_profile.dart';
+import 'package:login/app/home/campaign_list_page_2.dart';
 
-
-class CampaignListPage extends StatefulWidget {
-  CampaignListPage({Key key, this.title, @required this.database}) : super(key: key);
+class UserProfile extends StatefulWidget {
+  UserProfile({Key key, this.title, @required this.database}) : super(key: key);
   final String title;
   final Database database;
-  
+
   static Future<void> show(BuildContext context) async {
     final database = Provider.of<Database>(context, listen: false);
-    await Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => CampaignListPage(database: database),
-        fullscreenDialog: true,
-      )
-    );
+    await Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) => UserProfile(database: database),
+      fullscreenDialog: true,
+    ));
   }
 
   @override
-  _CampaignListPage createState() => _CampaignListPage();
+  _UserProfileState createState() => _UserProfileState();
 }
 
-class _CampaignListPage extends State<CampaignListPage> {
-
+class _UserProfileState extends State<UserProfile> {
   Future<void> _signOut(BuildContext context) async {
     try {
       final auth = Provider.of<AuthBase>(context, listen: false);
-      await auth.signOut();    
-    }
-    catch(e) {
+      await auth.signOut();
+    } catch (e) {
       print(e.toString());
     }
-  } 
+  }
 
   Widget _buildContents(BuildContext context) {
     return StreamBuilder<List<CampaignModel>>(
@@ -49,39 +44,31 @@ class _CampaignListPage extends State<CampaignListPage> {
       builder: (context, snapshot) {
         return ListItemBuilder<CampaignModel>(
           snapshot: snapshot,
-          itemBuilder: (context, campaign) => RestaurantCampaignList(campaign:campaign, database: widget.database)
+          itemBuilder: (context, campaign) =>
+              UserProfile(database: widget.database),
         );
       },
     );
   }
+
   Future<void> _confirmSignOut(BuildContext context) async {
     final didRequestSignOut = await PlatformAlertDialog(
-      title: 'Logout',
-      content: 'Are you sure that you want to logout', 
-      cancelActionText: 'Cancel',
-      defaultActionText: 'Logout'
-    ).show(context);
+            title: 'Logout',
+            content: 'Are you sure that you want to logout',
+            cancelActionText: 'Cancel',
+            defaultActionText: 'Logout')
+        .show(context);
     if (didRequestSignOut == true) {
       _signOut(context);
     }
   }
 
-  int _selectedIndex = 1;
+  int _selectedIndex = 3;
   void selectRestaurantListPage(BuildContext ctx) {
     Navigator.of(ctx).pushReplacement(
       MaterialPageRoute(
         builder: (_) {
           return RestaurantList(database: widget.database);
-        },
-      ),
-    );
-  }
-
-  void selectUserProfilePage(BuildContext ctx) {
-    Navigator.of(ctx).pushReplacement(
-      MaterialPageRoute(
-        builder: (_) {
-          return UserProfile(database: widget.database);
         },
       ),
     );
@@ -96,81 +83,104 @@ class _CampaignListPage extends State<CampaignListPage> {
       ),
     );
   }
+
+  void selectCampaignListPage(BuildContext ctx) {
+    Navigator.of(ctx).pushReplacement(
+      MaterialPageRoute(
+        builder: (_) {
+          return CampaignListPage(database: widget.database);
+        },
+      ),
+    );
+  }
+
 //-----------------------------------
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
       print("index is: $index");
-      if(_selectedIndex == 0){
+      if (_selectedIndex == 0) {
         selectMapPage(context);
-      }else if(_selectedIndex == 2){
+      } else if (_selectedIndex == 1) {
+        selectCampaignListPage(context);
+      } else if (_selectedIndex == 2) {
         selectRestaurantListPage(context);
-      }else if(_selectedIndex == 3){
-        selectUserProfilePage(context);
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
+    return Scaffold(
       appBar: AppBar(
-        title: Text("Campaign Lists"),
+        title: Text("User Profile"),
         actions: <Widget>[
-          // IconButton(
-          //   icon: Icon(
-          //     Icons.add,
-          //   ),
-          //   onPressed: () => _startAddNewTransaction(context),
-          // ),
           FlatButton(
             child: Text(
-              'Logout', 
-              style: TextStyle(
-                fontSize: 18.0,
-                color: Colors.white
-              ),
+              'Logout',
+              style: TextStyle(fontSize: 18.0, color: Colors.white),
             ),
             onPressed: () => _confirmSignOut(context),
           ),
         ],
       ),
-      body:
-          /* Column(
-        children: <Widget>[
-          RaisedButton(
-            onPressed: () {
-              startTimer();
-            },
-            child: Text("start"),
-          ),
-          Text('Hour: $_hour Minute: $_minute Second: $_second')
-        ],
-      ), */
-
-          Container(
-        //height: 600,
-        //width: MediaQuery.of(context).size.width,
-        child: SingleChildScrollView(
+      body: Align(
+        alignment: Alignment.center,
+        child: Container(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              _buildContents(context),
+              SizedBox(
+                height: 55,
+              ),
+              Text(
+                "User Information",
+                style: TextStyle(
+                  color: Colors.deepOrange,
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Text(
+                "Username : username",
+                style: TextStyle(
+                  fontSize: 18,
+                ),
+              ),
+              SizedBox(
+                height: 15,
+              ),
+              Text(
+                "Name : User's name",
+                style: TextStyle(
+                  fontSize: 18,
+                ),
+              ),
+              SizedBox(
+                height: 15,
+              ),
+              Text(
+                "Surname: User's surname",
+                style: TextStyle(
+                  fontSize: 18,
+                ),
+              ),
+              SizedBox(
+                height: 15,
+              ),
+              Text(
+                "E-mail: User's e-mail",
+                style: TextStyle(
+                  fontSize: 18,
+                ),
+              ),
             ],
           ),
         ),
       ),
-
-/*       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: FloatingActionButton(
-        child: Icon(
-          Icons.add,
-        ),
-        //backgroundColor: Colors.purple,
-        onPressed: () => _startAddNewTransaction(context),
-      ), */
-       bottomNavigationBar: BottomNavigationBar(
+      bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         unselectedItemColor: Colors.white,
         backgroundColor: Colors.blue,
@@ -204,7 +214,7 @@ class _CampaignListPage extends State<CampaignListPage> {
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.black54,
         onTap: _onItemTapped,
-      ), 
+      ),
     );
   }
 }

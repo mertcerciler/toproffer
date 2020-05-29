@@ -11,6 +11,8 @@ import 'package:provider/provider.dart';
 import 'lists/restaurant_active_campaigns_list_2.dart';
 import 'lists/restaurant_list_item.dart';
 import 'models/restaurant_model.dart';
+import 'package:login/app/home/map.dart';
+import 'package:login/app/home/user_profile.dart';
 
 class RestaurantList extends StatefulWidget {
   RestaurantList({Key key, this.title, @required this.database}) : super(key: key);
@@ -56,7 +58,7 @@ class _RestaurantList extends State<RestaurantList> {
   }
 int _selectedIndex = 2;
 void selectCampaignListPage(context) {
-   Navigator.of(context).push(
+   Navigator.of(context).pushReplacement(
       MaterialPageRoute(
         builder: (_) {
           return CampaignListPage(database: widget.database);
@@ -64,6 +66,26 @@ void selectCampaignListPage(context) {
       ),
     );
 }
+
+  void selectMapPage(BuildContext ctx) {
+    Navigator.of(ctx).push(
+      MaterialPageRoute(
+        builder: (_) {
+          return MapPage(database: widget.database);
+        },
+      ),
+    );
+  }
+
+  void selectUserProfilePage(BuildContext ctx) {
+    Navigator.of(ctx).pushReplacement(
+      MaterialPageRoute(
+        builder: (_) {
+          return UserProfile(database: widget.database);
+        },
+      ),
+    );
+  }
   
 //-----------------------------------
   void _onItemTapped(int index) {
@@ -73,9 +95,9 @@ void selectCampaignListPage(context) {
       if(_selectedIndex == 1){
         selectCampaignListPage(context);
       }else if(_selectedIndex == 0){
-        
+        selectMapPage(context);
       }else if(_selectedIndex == 3){
-        
+        selectUserProfilePage(context);
       }
     });
   }
