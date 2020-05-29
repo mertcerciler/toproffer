@@ -7,19 +7,19 @@ import 'dart:math';
 import 'package:provider/provider.dart';
 import 'package:login/app/services/database.dart';
 import 'package:flutter_picker/flutter_picker.dart';
+import 'package:grouped_buttons/grouped_buttons.dart';
 
 class CampaignCreatorPage extends StatefulWidget {
-  const CampaignCreatorPage({Key key, @required this.database}) : super(key: key);
+  const CampaignCreatorPage({Key key, @required this.database})
+      : super(key: key);
   final Database database;
 
   static Future<void> show(BuildContext context) async {
     final database = Provider.of<Database>(context, listen: false);
-    await Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => CampaignCreatorPage(database: database),
-        fullscreenDialog: true,
-      )
-    );
+    await Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) => CampaignCreatorPage(database: database),
+      fullscreenDialog: true,
+    ));
   }
 
   @override
@@ -35,7 +35,8 @@ class _CampaignCreatorPage extends State<CampaignCreatorPage> {
   final endingHourController = TextEditingController();
   static int selectedDurationHour = 0;
   static int selectedDurationMinutes = 0;
-  Duration duration = new Duration(hours: selectedDurationHour, minutes: selectedDurationMinutes); 
+  Duration duration = new Duration(
+      hours: selectedDurationHour, minutes: selectedDurationMinutes);
   Timer _timerCampaign;
 
   String dropdownValue = 'Permanent Campaign';
@@ -43,18 +44,21 @@ class _CampaignCreatorPage extends State<CampaignCreatorPage> {
   String campaignCategory2 = 'Not Selected(Optional)';
   bool selection = true;
 
-  void startCampaignTime () {{
-    const oneSec = const Duration(seconds: 1);
-    _timerCampaign = new Timer.periodic(oneSec, (Timer timer) => setState(() {
-      if((duration - oneSec).inSeconds < 1) {
-        _timerCampaign.cancel();
-      }
-      else {
-        duration = duration - oneSec;
-      }
-    }));
-  }}
-  
+  void startCampaignTime() {
+    {
+      const oneSec = const Duration(seconds: 1);
+      _timerCampaign = new Timer.periodic(
+          oneSec,
+          (Timer timer) => setState(() {
+                if ((duration - oneSec).inSeconds < 1) {
+                  _timerCampaign.cancel();
+                } else {
+                  duration = duration - oneSec;
+                }
+              }));
+    }
+  }
+
   _showPickerNumber(BuildContext context) async {
     new Picker(
         adapter: NumberPickerAdapter(data: [
@@ -62,7 +66,8 @@ class _CampaignCreatorPage extends State<CampaignCreatorPage> {
           NumberPickerColumn(begin: 0, end: 59),
         ]),
         delimiter: [
-          PickerDelimiter(child: Container(
+          PickerDelimiter(
+              child: Container(
             width: 30.0,
             alignment: Alignment.center,
             child: Icon(Icons.more_vert),
@@ -74,11 +79,12 @@ class _CampaignCreatorPage extends State<CampaignCreatorPage> {
           setState(() {
             selectedDurationHour = value[0];
             selectedDurationMinutes = value[1];
-            duration = new Duration(hours: selectedDurationHour, minutes: selectedDurationMinutes);
+            duration = new Duration(
+                hours: selectedDurationHour, minutes: selectedDurationMinutes);
           });
-        }
-    ).showDialog(context);
+        }).showDialog(context);
   }
+
   Future<String> getRestaurantName() async {
     var restaurantName = await widget.database.getRestaurantNameStream();
     return restaurantName['restaurant_name'];
@@ -94,6 +100,7 @@ class _CampaignCreatorPage extends State<CampaignCreatorPage> {
     var values = List<int>.generate(length, (i) => _random.nextInt(256));
     return base64Url.encode(values);
   }
+
   Future<void> submitData() async {
     final enteredContent = contentController.text;
     final enteredOldPrice = double.parse(oldPriceController.text);
@@ -104,11 +111,11 @@ class _CampaignCreatorPage extends State<CampaignCreatorPage> {
     DateTime campaignFinished = now.add(duration);
 
     String restaurantName = await getRestaurantName();
-    String restaurantAddress = await  getRestaurantAddress();
-    
+    String restaurantAddress = await getRestaurantAddress();
+
     String code = createCryptoRandomString(5);
     print(dropdownValue);
-    
+
     if (dropdownValue == 'Permanent Campaign') {
       startingHour = double.parse(startingHourController.text);
       endingHour = double.parse(endingHourController.text);
@@ -121,7 +128,7 @@ class _CampaignCreatorPage extends State<CampaignCreatorPage> {
       }
     }
 
-    if (dropdownValue == 'Momentarily Campaign') {    
+    if (dropdownValue == 'Momentarily Campaign') {
       if (enteredContent.isEmpty ||
           enteredOldPrice <= 0 ||
           enteredNewPrice <= 0) {
@@ -131,51 +138,50 @@ class _CampaignCreatorPage extends State<CampaignCreatorPage> {
 
     if (dropdownValue == 'Permanent Campaign') {
       CampaignModel campaign = CampaignModel(
-            id: now.toIso8601String(),
-            title: restaurantName,
-            restaurantAddress: restaurantAddress,
-            content: enteredContent, 
-            oldPrice: enteredOldPrice, 
-            newPrice: enteredNewPrice,
-            campaignType: 'Permanent', 
-            campaignCategory1: campaignCategory1, 
-            campaignCategory2: campaignCategory2,
-            startingHour: startingHour,
-            endingHour: endingHour,
-            code: code,
+        id: now.toIso8601String(),
+        title: restaurantName,
+        restaurantAddress: restaurantAddress,
+        content: enteredContent,
+        oldPrice: enteredOldPrice,
+        newPrice: enteredNewPrice,
+        campaignType: 'Permanent',
+        campaignCategory1: campaignCategory1,
+        campaignCategory2: campaignCategory2,
+        startingHour: startingHour,
+        endingHour: endingHour,
+        code: code,
       );
-      try{
+      try {
         await widget.database.createCampaign(campaign);
-        await widget.database.createAllCampaigns(campaign, now.toIso8601String());
-      }
-      catch(e) {
+        await widget.database
+            .createAllCampaigns(campaign, now.toIso8601String());
+      } catch (e) {
         rethrow;
       }
       Navigator.of(context).pop();
-    } 
-    else {
+    } else {
       CampaignModel campaign = CampaignModel(
-            id: now.toIso8601String(),
-            title: restaurantName,
-            restaurantAddress: restaurantAddress,
-            content: enteredContent, 
-            oldPrice: enteredOldPrice, 
-            newPrice: enteredNewPrice,
-            campaignType: 'Momentarily', 
-            campaignCategory1: campaignCategory1, 
-            campaignCategory2: campaignCategory2,
-            campaignFinished: campaignFinished,
-            campaignStarted: now,
-            code: code,
+        id: now.toIso8601String(),
+        title: restaurantName,
+        restaurantAddress: restaurantAddress,
+        content: enteredContent,
+        oldPrice: enteredOldPrice,
+        newPrice: enteredNewPrice,
+        campaignType: 'Momentarily',
+        campaignCategory1: campaignCategory1,
+        campaignCategory2: campaignCategory2,
+        campaignFinished: campaignFinished,
+        campaignStarted: now,
+        code: code,
       );
-      try{
+      try {
         await widget.database.createCampaign(campaign);
-        await widget.database.createAllCampaigns(campaign, now.toIso8601String());
-      }
-      catch (e) {
+        await widget.database
+            .createAllCampaigns(campaign, now.toIso8601String());
+      } catch (e) {
         rethrow;
       }
-      Navigator.of(context).pop();  
+      Navigator.of(context).pop();
     }
   }
 
@@ -192,20 +198,19 @@ class _CampaignCreatorPage extends State<CampaignCreatorPage> {
       ),
     );
   }
+
 //-----------------------------------
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
       print("index is: $index");
-      if(_selectedIndex == 0){
+      if (_selectedIndex == 0) {
         selectRestaurantActiveCampaigns(context);
-      }else if(_selectedIndex == 2){
-
-      }else if(_selectedIndex == 3){
-        
-      }
+      } else if (_selectedIndex == 2) {
+      } else if (_selectedIndex == 3) {}
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -370,9 +375,24 @@ class _CampaignCreatorPage extends State<CampaignCreatorPage> {
                     selection
                         ? Column(
                             children: <Widget>[
+                              CheckboxGroup(
+                                  labels: <String>[
+                                    "Sunday",
+                                    "Monday",
+                                    "Tuesday",
+                                    "Wednesday",
+                                    "Thursday",
+                                    "Friday",
+                                    "Saturday",
+                                  ],
+                                  onSelected: (List<String> checked) =>
+                                      print(checked.toString())),
+                              SizedBox(
+                                height: 12,
+                              ),
                               TextField(
-                                decoration: InputDecoration(
-                                    labelText: 'Starting Hour'),
+                                decoration:
+                                    InputDecoration(labelText: 'Starting Hour'),
                                 controller: startingHourController,
                                 keyboardType: TextInputType.numberWithOptions(
                                   decimal: true,
@@ -380,8 +400,8 @@ class _CampaignCreatorPage extends State<CampaignCreatorPage> {
                                 onSubmitted: (_) => submitData(),
                               ),
                               TextField(
-                                decoration: InputDecoration(
-                                    labelText: 'Ending Hour'),
+                                decoration:
+                                    InputDecoration(labelText: 'Ending Hour'),
                                 controller: endingHourController,
                                 keyboardType: TextInputType.numberWithOptions(
                                   decimal: true,
@@ -395,7 +415,7 @@ class _CampaignCreatorPage extends State<CampaignCreatorPage> {
                             subtitle: Text('You Select 1 hour 30 min'),
                             trailing: Icon(Icons.keyboard_arrow_down),
                             onTap: () => _showPickerNumber(context),
-                        ),
+                          ),
                     FlatButton(
                       child: Text(
                         'CREATE',
@@ -451,4 +471,3 @@ class _CampaignCreatorPage extends State<CampaignCreatorPage> {
     );
   }
 }
-
