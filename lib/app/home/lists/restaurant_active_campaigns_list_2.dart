@@ -313,8 +313,10 @@ class _RestaurantCampaignList  extends State<RestaurantCampaignList > {
                                             ),
                                           ),
                                         ),
-                                        widget.campaign[index].campaignCategory2.contains("null") ? 
-                                        Container(
+                                        widget.campaign[index].campaignCategory2.contains("Optional") ? 
+                                        Container()
+                                        :
+                                         Container(
                                           alignment: Alignment.center,
                                           child: Text(
                                             "${widget.campaign[index].campaignCategory2}",
@@ -322,9 +324,8 @@ class _RestaurantCampaignList  extends State<RestaurantCampaignList > {
                                               fontSize: 15,
                                             ),
                                           ),
-                                        )
-                                        :
-                                        Container(),
+                                        ),
+                                        
                                         SizedBox(
                                           height: 8,
                                         ),

@@ -98,6 +98,7 @@ class _RestaurantStatistics extends State<RestaurantStatistics> {
 
   getData() async {
     var data = await widget.database.getUsedCampaigns();
+   
   }
 
   _getSeriesData() {

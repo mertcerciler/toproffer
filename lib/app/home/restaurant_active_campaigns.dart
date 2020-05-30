@@ -48,7 +48,6 @@ class _RestaurantsActiveCampaigns extends State<RestaurantsActiveCampaigns> {
             defaultActionText: 'Logout')
         .show(context);
     if (didRequestSignOut == true) {
-      print('Mert');
       _signOut(context);
     }
   }

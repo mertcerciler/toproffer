@@ -251,6 +251,7 @@ class FirestoreDatabase implements Database {
     final path = APIPath.get_total_used_campaigns();
     final reference = Firestore.instance.collection(path);
     final snapshots = reference.snapshots();
+    List<Map<String, dynamic>> list = [];
     final map = snapshots.map((snapshot) => snapshot.documents.map(
         (snapshot) => 
           {
@@ -260,8 +261,7 @@ class FirestoreDatabase implements Database {
            'campaign_hour': snapshot.data['campaign_hour'],
           }
       ).toList());
-    print('$map is map');
-    var list = await map.first;
+    list = await map.first;
     return list;
   }
 
