@@ -4,7 +4,9 @@ import 'package:login/app/services/database.dart';
 import 'package:login/common_widgets/platform_alert_dialog.dart';
 
 class CampaignDetailsCustomerPage extends StatefulWidget {
-  CampaignDetailsCustomerPage({Key key, this.title, @required this.campaign, @required this.database}) : super(key: key);
+  CampaignDetailsCustomerPage(
+      {Key key, this.title, @required this.campaign, @required this.database})
+      : super(key: key);
   final String title;
   final CampaignModel campaign;
   final Database database;
@@ -14,9 +16,8 @@ class CampaignDetailsCustomerPage extends StatefulWidget {
 }
 
 class _CampaignDetailsCustomerPage extends State<CampaignDetailsCustomerPage> {
-
   TextEditingController codeInputController;
-  bool code =false;
+  bool code = false;
 
   @override
   void initState() {
@@ -27,19 +28,29 @@ class _CampaignDetailsCustomerPage extends State<CampaignDetailsCustomerPage> {
     var code = await widget.database.getCodeFuture(widget.campaign);
     final codeText = codeInputController.text;
     print('code text is $codeText, code is $code');
-    if(codeText == code){
+    if (codeText == code) {
       DateTime now = DateTime.now().toUtc().add(Duration(hours: 3));
       String campaignHour;
 
-      if (now.hour >= 1 && now.hour < 9) {campaignHour = '01.00 - 09.00';}
-      else if (now.hour >= 9 && now.hour < 11) {campaignHour = '09.00 - 11.00';}
-      else if (now.hour >= 11 && now.hour < 13) {campaignHour = '11.00 - 13.00';}
-      else if (now.hour >= 13 && now.hour < 15) {campaignHour = '13.00 - 15.00';}
-      else if (now.hour >= 15 && now.hour < 17) {campaignHour = '15.00 - 17.00';}
-      else if (now.hour >= 17 && now.hour < 19) {campaignHour = '17.00 - 19.00';}
-      else if (now.hour >= 19 && now.hour < 21) {campaignHour = '19.00 - 21.00';}
-      else if (now.hour >= 21 && now.hour < 23) {campaignHour = '21.00 - 23.00';}
-      else if (now.hour >= 23 || now.hour < 1) {campaignHour = '23.00 - 01.00';}
+      if (now.hour >= 1 && now.hour < 9) {
+        campaignHour = '01.00 - 09.00';
+      } else if (now.hour >= 9 && now.hour < 11) {
+        campaignHour = '09.00 - 11.00';
+      } else if (now.hour >= 11 && now.hour < 13) {
+        campaignHour = '11.00 - 13.00';
+      } else if (now.hour >= 13 && now.hour < 15) {
+        campaignHour = '13.00 - 15.00';
+      } else if (now.hour >= 15 && now.hour < 17) {
+        campaignHour = '15.00 - 17.00';
+      } else if (now.hour >= 17 && now.hour < 19) {
+        campaignHour = '17.00 - 19.00';
+      } else if (now.hour >= 19 && now.hour < 21) {
+        campaignHour = '19.00 - 21.00';
+      } else if (now.hour >= 21 && now.hour < 23) {
+        campaignHour = '21.00 - 23.00';
+      } else if (now.hour >= 23 || now.hour < 1) {
+        campaignHour = '23.00 - 01.00';
+      }
 
       try {
         await widget.database.addUsedCampaigns({
@@ -50,68 +61,73 @@ class _CampaignDetailsCustomerPage extends State<CampaignDetailsCustomerPage> {
           'campaign_day': now.weekday
         });
         Navigator.of(context).pop();
-      } catch(e){
+      } catch (e) {
         rethrow;
       }
-    }
-    else {
+    } else {
       print('code is not valid');
       PlatformAlertDialog(
-        title: 'Given code is not valid.',
-        content: 'Ask waiters to give verified code. ',
-        defaultActionText: 'OK').show(context);
-    }  
+              title: 'Given code is not valid.',
+              content: 'Ask waiters to give verified code. ',
+              defaultActionText: 'OK')
+          .show(context);
+    }
   }
 
   Row _useCodeTextField() {
-     return Row(
-        children: <Widget>[
-          Container(
-            padding: EdgeInsets.fromLTRB(50, 20, 50, 20),
-            width: 250,
-            child: TextField(
-            controller: codeInputController,
-            decoration: InputDecoration(
+    return Row(children: <Widget>[
+      Container(
+        padding: EdgeInsets.fromLTRB(50, 20, 50, 20),
+        width: 250,
+        child: TextField(
+          controller: codeInputController,
+          decoration: InputDecoration(
               labelText: 'Use the code',
               labelStyle: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.blue[900],
-                fontSize: 13.0),
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue[900],
+                  fontSize: 13.0),
               focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.blue[900]))),
-            ),
+                  borderSide: BorderSide(color: Colors.blue[900]))),
+        ),
+      ),
+      Container(
+        width: 100,
+        child: FlatButton(
+          color: Colors.blue,
+          textColor: Colors.white,
+          disabledColor: Colors.grey,
+          disabledTextColor: Colors.black,
+          padding: EdgeInsets.fromLTRB(1.0, 2, 1, 2),
+          splashColor: Colors.blueAccent,
+          onPressed: () {
+            submitCode();
+          },
+          child: Text(
+            "Submit Code",
+            style: TextStyle(fontSize: 13.0),
           ),
-          Container(
-            width: 100,
-            child: FlatButton(
-              color: Colors.blue,
-              textColor: Colors.white,
-              disabledColor: Colors.grey,
-              disabledTextColor: Colors.black,
-              padding: EdgeInsets.fromLTRB(1.0,2,1,2),
-              splashColor: Colors.blueAccent,
-              onPressed: () {
-                submitCode();
-              },
-              child: Text(
-                "Submit Code",
-                style: TextStyle(fontSize: 13.0),
-              ),
-          ),
-        )
-      ]
-    );
+        ),
+      )
+    ]);
   }
 
- void changeCode() {
+  void changeCode() {
     setState(() {
       code = true;
     });
   }
 
+  List<Widget> _campaignDays(List<dynamic> campaignDays) {
+    List<Widget> list = new List<Widget>();
+    for (var days in campaignDays) {
+      list.add(new Text(' $days '));
+    }
+    return list;
+  }
 
   Widget build(BuildContext context) {
-      return Scaffold(
+    return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text('Campaign Details'),
@@ -168,7 +184,7 @@ class _CampaignDetailsCustomerPage extends State<CampaignDetailsCustomerPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text(
-                '${widget.campaign.oldPrice}',
+                '₺ ${widget.campaign.oldPrice.toStringAsFixed(2)}',
                 textAlign: TextAlign.center,
                 style: new TextStyle(
                   color: Colors.black,
@@ -178,7 +194,7 @@ class _CampaignDetailsCustomerPage extends State<CampaignDetailsCustomerPage> {
                 ),
               ),
               Text(
-                '--${widget.campaign.newPrice}',
+                '->₺ ${widget.campaign.newPrice.toStringAsFixed(2)}',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 17,
@@ -189,6 +205,26 @@ class _CampaignDetailsCustomerPage extends State<CampaignDetailsCustomerPage> {
           ),
           SizedBox(
             height: 35,
+          ),
+          Container(
+            child: widget.campaign.campaignType == "Momentarily"
+                ? Container()
+                : Container(
+                    child: Column(
+                      children: <Widget>[
+                        Container(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children:
+                                _campaignDays(widget.campaign.campaignDays),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+          ),
+          SizedBox(
+            height: 15,
           ),
           Container(
             height: 40,
@@ -212,7 +248,7 @@ class _CampaignDetailsCustomerPage extends State<CampaignDetailsCustomerPage> {
                       color: Colors.blue,
                     ),
                   ),
-                  onPressed: () =>  changeCode(),
+                  onPressed: () => changeCode(),
                   shape: new RoundedRectangleBorder(
                     side: BorderSide(
                       color: Colors.blue,
@@ -224,10 +260,12 @@ class _CampaignDetailsCustomerPage extends State<CampaignDetailsCustomerPage> {
               ],
             ),
           ),
-           code? _useCodeTextField() 
-           :  Text('Use the code server gives to you.',
-                style: TextStyle(color: Colors.blue[900], height: 4),
-                textAlign: TextAlign.center,
+          code
+              ? _useCodeTextField()
+              : Text(
+                  'Use the code server gives to you.',
+                  style: TextStyle(color: Colors.blue[900], height: 4),
+                  textAlign: TextAlign.center,
                 )
         ],
       ),

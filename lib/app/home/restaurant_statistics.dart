@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:login/app/services/database.dart';
 import './models/sales_data.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
+import 'restaurant_active_campaigns.dart';
 
 import 'campaign_creator_page.dart';
 
@@ -35,6 +36,18 @@ class _RestaurantStatistics extends State<RestaurantStatistics> {
     );
   }
 
+  void selectMyCampaigns(BuildContext context) {
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (_) {
+          return RestaurantsActiveCampaigns(
+            database: widget.database,
+          );
+        },
+      ),
+    );
+  }
+
 //-----------------------------------
   void _onItemTapped(int index) {
     setState(() {
@@ -44,7 +57,9 @@ class _RestaurantStatistics extends State<RestaurantStatistics> {
         selectGenerator(context);
       } else if (_selectedIndex == 2) {
         selectHistory(context);
-      } else if (_selectedIndex == 3) {}
+      } else if (_selectedIndex == 0) {
+        selectMyCampaigns(context);
+      }
     });
   }
 
@@ -85,7 +100,7 @@ class _RestaurantStatistics extends State<RestaurantStatistics> {
     var data = await widget.database.getUsedCampaigns();
   }
 
-   _getSeriesData() {
+  _getSeriesData() {
     List<charts.Series<SalesData, int>> series = [
       charts.Series(
           id: "Sales",
@@ -130,23 +145,42 @@ class _RestaurantStatistics extends State<RestaurantStatistics> {
                   fontSize: 15),
             ),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text('Mon',
-                  style: TextStyle(
-                    color: Colors.blue[900],
-                    fontWeight: FontWeight.bold,
-                  )),
-              Radio(
-                value: 'Mon',
+          Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+            Text('Mon',
+                style: TextStyle(
+                  color: Colors.blue[900],
+                  fontWeight: FontWeight.bold,
+                )),
+            Radio(
+              value: 'Mon',
+              groupValue: group,
+              onChanged: (T) {
+                print(T);
+                getData();
+                setState(() {
+                  monSelected = true;
+                  tueSelected = false;
+                  wedSelected = false;
+                  thurSelected = false;
+                  friSelected = false;
+                  satSelected = false;
+                  sunSelected = false;
+                  group = T;
+                });
+              },
+            ),
+            Text('Tue',
+                style: TextStyle(
+                  color: Colors.blue[900],
+                  fontWeight: FontWeight.bold,
+                )),
+            Radio(
+                value: 'Tue',
                 groupValue: group,
                 onChanged: (T) {
-                  print(T);
-                  getData();
                   setState(() {
-                    monSelected = true;
-                    tueSelected = false;
+                    monSelected = false;
+                    tueSelected = true;
                     wedSelected = false;
                     thurSelected = false;
                     friSelected = false;
@@ -154,72 +188,51 @@ class _RestaurantStatistics extends State<RestaurantStatistics> {
                     sunSelected = false;
                     group = T;
                   });
-                },
-              ),
-              Text('Tue',
-                  style: TextStyle(
-                    color: Colors.blue[900],
-                    fontWeight: FontWeight.bold,
-                  )),
-              Radio(
-                  value: 'Tue',
-                  groupValue: group,
-                  onChanged: (T) {
-                    setState(() {
-                      monSelected = false;
-                      tueSelected = true;
-                      wedSelected = false;
-                      thurSelected = false;
-                      friSelected = false;
-                      satSelected = false;
-                      sunSelected = false;
-                      group = T;
-                    });
-                  }),
-              Text('Wed',
-                  style: TextStyle(
-                    color: Colors.blue[900],
-                    fontWeight: FontWeight.bold,
-                  )),
-              Radio(
-                  value: 'Wed',
-                  groupValue: group,
-                  onChanged: (T) {
-                    setState(() {
-                      monSelected = false;
-                      tueSelected = false;
-                      wedSelected = true;
-                      thurSelected = false;
-                      friSelected = false;
-                      satSelected = false;
-                      sunSelected = false;
-                      group = T;
-                    });
-                  }),
-              Text('Thu',
-                  style: TextStyle(
-                    color: Colors.blue[900],
-                    fontWeight: FontWeight.bold,
-                  )),
-              Radio(
-                  value: 'Thu',
-                  groupValue: group,
-                  onChanged: (T) {
-                    setState(() {
-                      monSelected = false;
-                      tueSelected = false;
-                      wedSelected = false;
-                      thurSelected = true;
-                      friSelected = false;
-                      satSelected = false;
-                      sunSelected = false;
-                      group = T;
-                    });
-                  }),
-            ]),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
+                }),
+            Text('Wed',
+                style: TextStyle(
+                  color: Colors.blue[900],
+                  fontWeight: FontWeight.bold,
+                )),
+            Radio(
+                value: 'Wed',
+                groupValue: group,
+                onChanged: (T) {
+                  setState(() {
+                    monSelected = false;
+                    tueSelected = false;
+                    wedSelected = true;
+                    thurSelected = false;
+                    friSelected = false;
+                    satSelected = false;
+                    sunSelected = false;
+                    group = T;
+                  });
+                }),
+            Text('Thu',
+                style: TextStyle(
+                  color: Colors.blue[900],
+                  fontWeight: FontWeight.bold,
+                )),
+            Radio(
+                value: 'Thu',
+                groupValue: group,
+                onChanged: (T) {
+                  setState(() {
+                    monSelected = false;
+                    tueSelected = false;
+                    wedSelected = false;
+                    thurSelected = true;
+                    friSelected = false;
+                    satSelected = false;
+                    sunSelected = false;
+                    group = T;
+                  });
+                }),
+          ]),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
               Text('Fri',
                   style: TextStyle(
                     color: Colors.blue[900],
@@ -286,8 +299,6 @@ class _RestaurantStatistics extends State<RestaurantStatistics> {
       ),
     );
   }
-
- 
 
   @override
   Widget build(BuildContext context) {

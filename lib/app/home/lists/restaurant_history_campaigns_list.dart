@@ -133,7 +133,7 @@ class _RestaurantHistoryCampaignList  extends State<RestaurantHistoryCampaignLis
                                         Row(
                                           children: <Widget>[
                                             Text(
-                                              '\$${widget.campaign[index].oldPrice}',
+                                              '\$${widget.campaign[index].oldPrice.toStringAsFixed(2)}',
                                               style: new TextStyle(
                                                   color: Colors.black,
                                                   decoration: TextDecoration
@@ -141,7 +141,7 @@ class _RestaurantHistoryCampaignList  extends State<RestaurantHistoryCampaignLis
                                                   fontSize: 15),
                                             ),
                                             Text(
-                                              ' --> \$${widget.campaign[index].newPrice}',
+                                              ' --> \$${widget.campaign[index].newPrice.toStringAsFixed(2)}',
                                               style: TextStyle(
                                                 fontSize: 15,
                                               ),
@@ -269,7 +269,7 @@ class _RestaurantHistoryCampaignList  extends State<RestaurantHistoryCampaignLis
                                         Row(
                                           children: <Widget>[
                                             Text(
-                                              '\$${widget.campaign[index].oldPrice}',
+                                              '\$${widget.campaign[index].oldPrice.toStringAsFixed(2)}',
                                               style: new TextStyle(
                                                   color: Colors.black,
                                                   decoration: TextDecoration
@@ -277,7 +277,7 @@ class _RestaurantHistoryCampaignList  extends State<RestaurantHistoryCampaignLis
                                                   fontSize: 15),
                                             ),
                                             Text(
-                                              ' --> \$${widget.campaign[index].newPrice}',
+                                              ' --> \$${widget.campaign[index].newPrice.toStringAsFixed(2)}',
                                               style: TextStyle(
                                                 fontSize: 15,
                                               ),

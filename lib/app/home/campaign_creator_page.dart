@@ -444,13 +444,13 @@ class _CampaignCreatorPage extends State<CampaignCreatorPage> {
                             children: <Widget>[
                               CheckboxGroup(
                                   labels: <String>[
-                                    "Sunday",
-                                    "Monday",
-                                    "Tuesday",
-                                    "Wednesday",
-                                    "Thursday",
-                                    "Friday",
-                                    "Saturday",
+                                    "Sun",
+                                    "Mon",
+                                    "Tue",
+                                    "Wed",
+                                    "Thu",
+                                    "Fri",
+                                    "Sat",
                                   ],
                                   onSelected: (List<String> checked) {setState(() {
                                     campaignDays = checked;

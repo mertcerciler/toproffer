@@ -177,7 +177,7 @@ class _RestaurantCampaignList  extends State<RestaurantCampaignList > {
                                         Row(
                                           children: <Widget>[
                                             Text(
-                                              '\$${widget.campaign[index].oldPrice.toStringAsFixed(2)}',
+                                              '₺ ${widget.campaign[index].oldPrice.toStringAsFixed(2)}',
                                               style: new TextStyle(
                                                   color: Colors.black,
                                                   decoration: TextDecoration
@@ -185,7 +185,7 @@ class _RestaurantCampaignList  extends State<RestaurantCampaignList > {
                                                   fontSize: 15),
                                             ),
                                             Text(
-                                              ' --> \$${widget.campaign[index].newPrice.toStringAsFixed(2)}',
+                                              ' --> ₺ ${widget.campaign[index].newPrice.toStringAsFixed(2)}',
                                               style: TextStyle(
                                                 fontSize: 15,
                                               ),
@@ -331,7 +331,7 @@ class _RestaurantCampaignList  extends State<RestaurantCampaignList > {
                                         Row(
                                           children: <Widget>[
                                             Text(
-                                              '\$${widget.campaign[index].oldPrice.toStringAsFixed(2)}',
+                                              '₺ ${widget.campaign[index].oldPrice.toStringAsFixed(2)}',
                                               style: new TextStyle(
                                                   color: Colors.black,
                                                   decoration: TextDecoration
@@ -339,7 +339,7 @@ class _RestaurantCampaignList  extends State<RestaurantCampaignList > {
                                                   fontSize: 15),
                                             ),
                                             Text(
-                                              ' --> \$${widget.campaign[index].newPrice.toStringAsFixed(2)}',
+                                              ' --> ₺ ${widget.campaign[index].newPrice.toStringAsFixed(2)}',
                                               style: TextStyle(
                                                 fontSize: 15,
                                               ),

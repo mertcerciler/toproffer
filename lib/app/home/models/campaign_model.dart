@@ -29,7 +29,7 @@ class CampaignModel {
   final double newPrice;
   final String startingHour;
   final String endingHour;
-  final List<String> campaignDays;
+  final List<dynamic> campaignDays;
   final String restaurantAddress;
   final DateTime campaignFinished;
   final DateTime campaignStarted;
