@@ -14,7 +14,6 @@ class MapPage extends StatefulWidget {
   const MapPage({Key key, @required this.database}) : super(key: key);
   final Database database;
 
-  
   @override
   _MapPage createState() => _MapPage();
 }
@@ -60,7 +59,7 @@ class _MapPage extends State<MapPage> {
       }
     }
   }
-  
+
   @override
   void initState() {
     print('initState');
@@ -94,32 +93,31 @@ class _MapPage extends State<MapPage> {
     });
   }
 
-  _displayCampaigns(BuildContext context, String id){
+  _displayCampaigns(BuildContext context, String id) {
     print(id);
     return StreamBuilder<List<CampaignModel>>(
-      stream: widget.database.campaignStreamMap(id),
-      builder: (context, snapshot) {
-        return Positioned(
-          bottom: 20.0,
-          child: Container(
-            height: 200.0,
-            width: MediaQuery.of(context).size.width,
-            child: PageView.builder(
-              controller: _pageController,
-              itemCount: snapshot.data.length,
-              itemBuilder: (BuildContext context, int index) {
-                return _shopList(snapshot.data, index);
-              },
+        stream: widget.database.campaignStreamMap(id),
+        builder: (context, snapshot) {
+          return Positioned(
+            bottom: 20.0,
+            child: Container(
+              height: 200.0,
+              width: MediaQuery.of(context).size.width,
+              child: PageView.builder(
+                controller: _pageController,
+                itemCount: snapshot.data.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return _shopList(snapshot.data, index);
+                },
+              ),
             ),
-          ),
-        );
-      }
-    );
+          );
+        });
   }
 
   void _changeCheck(String id_1) {
     setState(() {
-      check =true;
+      check = true;
       id = id_1;
     });
     print('check is $check');
@@ -132,18 +130,18 @@ class _MapPage extends State<MapPage> {
     var cord = await widget.database.getCoordinates();
     setState(() {
       cord.forEach((element) {
-      if (element['lat'] != null){
-        var cords = LatLng(element['lat'], element['long']);
-        print('onmapcreated');
-        allMarkers.add(Marker(
-            markerId: MarkerId(element['address']),
-            draggable: false,
-            onTap: () => _changeCheck(element['id']),
-            infoWindow:
-                InfoWindow(title: element['name'], snippet: element['address']),
-            position: cords));
-      }
-    });
+        if (element['lat'] != null) {
+          var cords = LatLng(element['lat'], element['long']);
+          print('onmapcreated');
+          allMarkers.add(Marker(
+              markerId: MarkerId(element['address']),
+              draggable: false,
+              onTap: () => _changeCheck(element['id']),
+              infoWindow: InfoWindow(
+                  title: element['name'], snippet: element['address']),
+              position: cords));
+        }
+      });
     });
     print(check);
     LocationData sa = await location.getLocation();
@@ -214,8 +212,8 @@ class _MapPage extends State<MapPage> {
                                       bottomLeft: Radius.circular(10.0),
                                       topLeft: Radius.circular(10.0)),
                                   image: DecorationImage(
-                                      image:
-                                          ExactAssetImage('assets/federal3.jpg'),
+                                      image: ExactAssetImage(
+                                          'assets/federal3.jpg'),
                                       fit: BoxFit.cover))),
                           SizedBox(width: 5.0),
                           Column(
@@ -225,22 +223,40 @@ class _MapPage extends State<MapPage> {
                                 Text(
                                   campaigns[index].title,
                                   style: TextStyle(
-                                      fontSize: 12.5,
+                                      color: Colors.redAccent,
+                                      fontSize: 14.5,
                                       fontWeight: FontWeight.bold),
                                 ),
-                                Text(
-                                  campaigns[index].content,
-                                  style: TextStyle(
-                                      fontSize: 12.0,
-                                      fontWeight: FontWeight.w600),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Text(
+                                      campaigns[index].content,
+                                      style: TextStyle(
+                                          fontSize: 13.0,
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                  ],
                                 ),
                                 Container(
                                   width: 170.0,
-                                  child: Text(
-                                    campaigns[index].content,
-                                    style: TextStyle(
-                                        fontSize: 11.0,
-                                        fontWeight: FontWeight.w300),
+                                  child: Row(
+                                    children: <Widget>[
+                                      Text(
+                                        "₺ ${campaigns[index].oldPrice.toStringAsFixed(2)}",
+                                        style: TextStyle(
+                                            decoration:
+                                                TextDecoration.lineThrough,
+                                            fontSize: 11.0,
+                                            fontWeight: FontWeight.w300),
+                                      ),
+                                      Text(
+                                        " -> ₺ ${campaigns[index].newPrice.toStringAsFixed(2)}",
+                                        style: TextStyle(
+                                            fontSize: 11.0,
+                                            fontWeight: FontWeight.w300),
+                                      ),
+                                    ],
                                   ),
                                 )
                               ])
@@ -267,11 +283,11 @@ class _MapPage extends State<MapPage> {
                 initialCameraPosition:
                     CameraPosition(target: LatLng(lati, longi), zoom: 17),
                 mapType: MapType.terrain,
-                onMapCreated:  _onMapCreated,
+                onMapCreated: _onMapCreated,
                 markers: Set.from(allMarkers),
               ),
             ),
-            check ?  _displayCampaigns(context, id) : Container()
+            check ? _displayCampaigns(context, id) : Container()
             // Positioned(
             //   bottom: 20.0,
             //   child: Container(

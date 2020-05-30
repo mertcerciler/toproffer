@@ -67,7 +67,9 @@ class _RestaurantsActiveCampaigns extends State<RestaurantsActiveCampaigns> {
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
         builder: (_) {
-          return RestaurantStatistics(database: widget.database,);
+          return RestaurantStatistics(
+            database: widget.database,
+          );
         },
       ),
     );
@@ -82,9 +84,7 @@ class _RestaurantsActiveCampaigns extends State<RestaurantsActiveCampaigns> {
         selectGenerator(context);
       } else if (_selectedIndex == 2) {
         selectHistory(context);
-      } else if (_selectedIndex == 3) {
-
-      }
+      } else if (_selectedIndex == 3) {}
     });
   }
 
@@ -146,6 +146,7 @@ class _RestaurantsActiveCampaigns extends State<RestaurantsActiveCampaigns> {
         ],
       ),
       body: Container(
+        height: MediaQuery.of(context).size.height * 0.80,
         child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -200,9 +201,12 @@ class _RestaurantsActiveCampaigns extends State<RestaurantsActiveCampaigns> {
               SizedBox(
                 height: 15,
               ),
-              selectedView
-                  ? _buildContents(context)
-                  : _buildHistoryContents(context),
+              Container(
+                height: MediaQuery.of(context).size.height * 0.68,
+                child: selectedView
+                    ? _buildContents(context)
+                    : _buildHistoryContents(context),
+              ),
             ],
           ),
         ),
