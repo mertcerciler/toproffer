@@ -121,7 +121,10 @@ class _CampaignDetailsCustomerPage extends State<CampaignDetailsCustomerPage> {
   List<Widget> _campaignDays(List<dynamic> campaignDays) {
     List<Widget> list = new List<Widget>();
     for (var days in campaignDays) {
-      list.add(new Text(' $days '));
+      list.add(new Text(
+        ' $days ',
+        style: TextStyle(fontSize: 18, color: Colors.redAccent),
+      ));
     }
     return list;
   }
@@ -189,15 +192,15 @@ class _CampaignDetailsCustomerPage extends State<CampaignDetailsCustomerPage> {
                 style: new TextStyle(
                   color: Colors.black,
                   decoration: TextDecoration.lineThrough,
-                  fontSize: 17,
+                  fontSize: 19,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               Text(
-                '->₺ ${widget.campaign.newPrice.toStringAsFixed(2)}',
+                ' -> ₺ ${widget.campaign.newPrice.toStringAsFixed(2)}',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 17,
+                  fontSize: 19,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -218,6 +221,26 @@ class _CampaignDetailsCustomerPage extends State<CampaignDetailsCustomerPage> {
                             children:
                                 _campaignDays(widget.campaign.campaignDays),
                           ),
+                        ),
+                        SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Text(
+                              "${widget.campaign.startingHour.substring(10, 12)}:${widget.campaign.startingHour.substring(13, 15)} - ",
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.redAccent,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                              "${widget.campaign.endingHour.substring(10, 12)}:${widget.campaign.endingHour.substring(13, 15)}",
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.redAccent,
+                                  fontWeight: FontWeight.bold),
+                            )
+                          ],
                         ),
                       ],
                     ),
