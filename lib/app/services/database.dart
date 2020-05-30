@@ -32,6 +32,8 @@ abstract class Database {
   Future<void> addFollowers(UserModel user, RestaurantModel restaurant);
   Future<void> deleteCampaign(CampaignModel campaign);
   Future<List<Map<String, dynamic>>> getCoordinates(); 
+  Future<List<Map<String, dynamic>>> getUsedCampaigns();
+  Future<void> deleteAllCampaign(CampaignModel campaign);
 }
 
 abstract class DatabaseUser {
@@ -212,6 +214,12 @@ class FirestoreDatabase implements Database {
     );
   }
 
+  Future<void> deleteAllCampaign(CampaignModel campaign) async {
+    await _service.removeData(
+      path: APIPath.total_active_campaigns(campaign.id)
+    );
+  }
+
   Future<void> createAllCampaigns(CampaignModel campaign, String campaignId) async {
     await _service.setData(
         data: campaign.toMap(),
@@ -238,11 +246,23 @@ class FirestoreDatabase implements Database {
       );
     }
   }
+
   Future<List<Map<String, dynamic>>> getUsedCampaigns() async {
     final path = APIPath.get_total_used_campaigns();
     final reference = Firestore.instance.collection(path);
     final snapshots = reference.snapshots();
-    List<Map<String, dynamic>> list = [];
+    final map = snapshots.map((snapshot) => snapshot.documents.map(
+        (snapshot) => 
+          {
+           'campaign_category1': snapshot.data['campaign_category1'],
+           'campaign_category2': snapshot.data['campaign_category2'],
+           'campaign_day': snapshot.data['campaign_day'],
+           'campaign_hour': snapshot.data['campaign_hour'],
+          }
+      ).toList());
+    print('$map is map');
+    var list = await map.first;
+    return list;
   }
 
   Future<List<Map<String, dynamic>>> getCoordinates() async {

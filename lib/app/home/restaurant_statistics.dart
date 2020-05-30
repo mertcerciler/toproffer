@@ -9,11 +9,11 @@ class RestaurantStatistics extends StatefulWidget {
   const RestaurantStatistics({Key key, this.database}) : super(key: key);
   final Database database;
 
-  
   @override
   _RestaurantStatistics createState() => _RestaurantStatistics();
 }
-class _RestaurantStatistics extends State<RestaurantStatistics>{
+
+class _RestaurantStatistics extends State<RestaurantStatistics> {
   int _selectedIndex = 2;
   void selectGenerator(BuildContext ctx) {
     Navigator.of(ctx).pushReplacement(
@@ -44,10 +44,10 @@ class _RestaurantStatistics extends State<RestaurantStatistics>{
         selectGenerator(context);
       } else if (_selectedIndex == 2) {
         selectHistory(context);
-      } else if (_selectedIndex == 3) {
-      }
+      } else if (_selectedIndex == 3) {}
     });
   }
+
   // Defining the data
   final data = [
     new SalesData(0, 1500000),
@@ -81,7 +81,11 @@ class _RestaurantStatistics extends State<RestaurantStatistics>{
     new SalesData(19, 4456500),
   ];
 
-  _getSeriesData() {
+  getData() async {
+    var data = await widget.database.getUsedCampaigns();
+  }
+
+   _getSeriesData() {
     List<charts.Series<SalesData, int>> series = [
       charts.Series(
           id: "Sales",
@@ -101,42 +105,227 @@ class _RestaurantStatistics extends State<RestaurantStatistics>{
     return series;
   }
 
+  String group = '';
+  bool monSelected = false;
+  bool tueSelected = false;
+  bool wedSelected = false;
+  bool thurSelected = false;
+  bool friSelected = false;
+  bool satSelected = false;
+  bool sunSelected = false;
+
+  Container _daySelection() {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(2, 15, 50, 00),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Container(
+            alignment: Alignment.center,
+            child: Text(
+              'Select Day',
+              style: TextStyle(
+                  color: Colors.blue[900],
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15),
+            ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text('Mon',
+                  style: TextStyle(
+                    color: Colors.blue[900],
+                    fontWeight: FontWeight.bold,
+                  )),
+              Radio(
+                value: 'Mon',
+                groupValue: group,
+                onChanged: (T) {
+                  print(T);
+                  getData();
+                  setState(() {
+                    monSelected = true;
+                    tueSelected = false;
+                    wedSelected = false;
+                    thurSelected = false;
+                    friSelected = false;
+                    satSelected = false;
+                    sunSelected = false;
+                    group = T;
+                  });
+                },
+              ),
+              Text('Tue',
+                  style: TextStyle(
+                    color: Colors.blue[900],
+                    fontWeight: FontWeight.bold,
+                  )),
+              Radio(
+                  value: 'Tue',
+                  groupValue: group,
+                  onChanged: (T) {
+                    setState(() {
+                      monSelected = false;
+                      tueSelected = true;
+                      wedSelected = false;
+                      thurSelected = false;
+                      friSelected = false;
+                      satSelected = false;
+                      sunSelected = false;
+                      group = T;
+                    });
+                  }),
+              Text('Wed',
+                  style: TextStyle(
+                    color: Colors.blue[900],
+                    fontWeight: FontWeight.bold,
+                  )),
+              Radio(
+                  value: 'Wed',
+                  groupValue: group,
+                  onChanged: (T) {
+                    setState(() {
+                      monSelected = false;
+                      tueSelected = false;
+                      wedSelected = true;
+                      thurSelected = false;
+                      friSelected = false;
+                      satSelected = false;
+                      sunSelected = false;
+                      group = T;
+                    });
+                  }),
+              Text('Thu',
+                  style: TextStyle(
+                    color: Colors.blue[900],
+                    fontWeight: FontWeight.bold,
+                  )),
+              Radio(
+                  value: 'Thu',
+                  groupValue: group,
+                  onChanged: (T) {
+                    setState(() {
+                      monSelected = false;
+                      tueSelected = false;
+                      wedSelected = false;
+                      thurSelected = true;
+                      friSelected = false;
+                      satSelected = false;
+                      sunSelected = false;
+                      group = T;
+                    });
+                  }),
+            ]),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+              Text('Fri',
+                  style: TextStyle(
+                    color: Colors.blue[900],
+                    fontWeight: FontWeight.bold,
+                  )),
+              Radio(
+                  value: 'Fri',
+                  groupValue: group,
+                  onChanged: (T) {
+                    setState(() {
+                      monSelected = false;
+                      tueSelected = false;
+                      wedSelected = false;
+                      thurSelected = false;
+                      friSelected = true;
+                      satSelected = false;
+                      sunSelected = false;
+                      group = T;
+                    });
+                  }),
+              Text('Sat',
+                  style: TextStyle(
+                    color: Colors.blue[900],
+                    fontWeight: FontWeight.bold,
+                  )),
+              Radio(
+                  value: 'Sat',
+                  groupValue: group,
+                  onChanged: (T) {
+                    setState(() {
+                      monSelected = false;
+                      tueSelected = false;
+                      wedSelected = false;
+                      thurSelected = false;
+                      friSelected = false;
+                      satSelected = true;
+                      sunSelected = false;
+                      group = T;
+                    });
+                  }),
+              Text('Sun',
+                  style: TextStyle(
+                    color: Colors.blue[900],
+                    fontWeight: FontWeight.bold,
+                  )),
+              Radio(
+                  value: 'Sun',
+                  groupValue: group,
+                  onChanged: (T) {
+                    setState(() {
+                      monSelected = false;
+                      tueSelected = false;
+                      wedSelected = false;
+                      thurSelected = false;
+                      friSelected = false;
+                      satSelected = false;
+                      sunSelected = true;
+                      group = T;
+                    });
+                  })
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+ 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text('Line Chart'),
-          centerTitle: true,
-        ),
-        body: Center(
-          child: Container(
-            height: 550,
-            padding: EdgeInsets.all(10),
-            child: Card(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  children: <Widget>[
-                    Text(
-                      "Sales of a company over the years",
-                      style: TextStyle(fontWeight: FontWeight.bold),
+      appBar: AppBar(
+        title: Text('Line Chart'),
+        centerTitle: true,
+      ),
+      body: Center(
+        child: Container(
+          height: 550,
+          padding: EdgeInsets.all(10),
+          child: Card(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: <Widget>[
+                  _daySelection(),
+                  Text(
+                    "Sales of a company over the years",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Expanded(
+                    child: new charts.LineChart(
+                      _getSeriesData(),
+                      animate: true,
                     ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Expanded(
-                      child: new charts.LineChart(
-                        _getSeriesData(),
-                        animate: true,
-                      ),
-                    )
-                  ],
-                ),
+                  )
+                ],
               ),
             ),
           ),
         ),
-        bottomNavigationBar: BottomNavigationBar(
+      ),
+      bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         unselectedItemColor: Colors.white,
         backgroundColor: Colors.blue,
@@ -169,6 +358,7 @@ class _RestaurantStatistics extends State<RestaurantStatistics>{
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.black54,
         onTap: _onItemTapped,
-      ),);
-    }
+      ),
+    );
+  }
 }
