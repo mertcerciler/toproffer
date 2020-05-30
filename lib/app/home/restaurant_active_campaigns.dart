@@ -67,7 +67,7 @@ class _RestaurantsActiveCampaigns extends State<RestaurantsActiveCampaigns> {
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
         builder: (_) {
-          return RestaurantStatistics();
+          return RestaurantStatistics(database: widget.database,);
         },
       ),
     );

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:login/app/home/models/campaign_model.dart';
 import 'package:login/app/services/database.dart';
@@ -183,6 +185,23 @@ class _CampaignDetailsCustomerPage extends State<CampaignDetailsCustomerPage> {
               ],
             ),
           ),
+          Align(
+              alignment: Alignment.center,
+              child: Text("${widget.campaign.campaignCategory1}",
+                  style: TextStyle(fontSize: 16, color: Colors.redAccent))),
+          widget.campaign.campaignCategory2.contains("Optional")
+              ? Container()
+              : Container(
+                  alignment: Alignment.center,
+                  child: Text(
+                    "${widget.campaign.campaignCategory2}",
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.redAccent,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 12,),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
@@ -207,7 +226,7 @@ class _CampaignDetailsCustomerPage extends State<CampaignDetailsCustomerPage> {
             ],
           ),
           SizedBox(
-            height: 35,
+            height: 25,
           ),
           Container(
             child: widget.campaign.campaignType == "Momentarily"
