@@ -98,6 +98,7 @@ class _MapPage extends State<MapPage> {
     return StreamBuilder<List<CampaignModel>>(
         stream: widget.database.campaignStreamMap(id),
         builder: (context, snapshot) {
+          print('length is ${snapshot.data.length}');
           return Positioned(
             bottom: 20.0,
             child: Container(

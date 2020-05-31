@@ -48,11 +48,14 @@ class APIPath {
   static String get_old_campaigns(String uid) => 
     'users/$uid/user_type/restaurants/old_campaigns/';
 
-  static String total_used_campaigns(String cid) =>
-    'total_used_campaigns/$cid';
+  static String total_used_campaigns(int day, String category, String hour) =>
+    'total_used_campaigns/$day/$category/$hour';
 
-  static String get_total_used_campaigns() =>
-    'total_used_campaigns/';
+  static String get_total_used_campaigns(int day, String category, String hour) =>
+    'total_used_campaigns/$day/$category/$hour';
+
+  static String get_total_used_campaigns_2(int day, String category) =>
+    'total_used_campaigns/$day/$category';
 
   static String total_active_campaigns(String cid) => 
     'total_active_campaigns/$cid';

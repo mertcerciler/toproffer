@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:login/app/home/campaign_creator_page.dart';
 import 'package:login/app/home/lists/list_item_builder.dart';
 import 'package:login/app/home/models/campaign_model.dart';
-import 'package:login/app/home/restaurant_list.dart';
-import 'package:login/app/home/restuarant_history_campaigns.dart';
 import 'package:login/app/services/auth.dart';
 import 'package:login/app/services/database.dart';
 import 'package:login/common_widgets/platform_alert_dialog.dart';

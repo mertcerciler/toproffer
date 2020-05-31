@@ -30,38 +30,85 @@ class _CampaignDetailsCustomerPage extends State<CampaignDetailsCustomerPage> {
     var code = await widget.database.getCodeFuture(widget.campaign);
     final codeText = codeInputController.text;
     print('code text is $codeText, code is $code');
+
     if (codeText == code) {
       DateTime now = DateTime.now().toUtc().add(Duration(hours: 3));
       String campaignHour;
+      int count1 = 0;
+      int count2 = 0;
 
+      List<String> hours = [
+        '01:00 - 09:00',
+        '09:00 - 11:00',
+        '11:00 - 13:00',
+        '13:00 - 15:00',
+        '15:00 - 17:00',
+        '17:00 - 19:00',
+        '19:00 - 21:00',
+        '21:00 - 23:00',
+        '23:00 - 01:00'
+      ];
       if (now.hour >= 1 && now.hour < 9) {
-        campaignHour = '01.00 - 09.00';
+        campaignHour = '01:00 - 09:00';
       } else if (now.hour >= 9 && now.hour < 11) {
-        campaignHour = '09.00 - 11.00';
+        campaignHour = '09:00 - 11:00';
       } else if (now.hour >= 11 && now.hour < 13) {
-        campaignHour = '11.00 - 13.00';
+        campaignHour = '11:00 - 13:00';
       } else if (now.hour >= 13 && now.hour < 15) {
-        campaignHour = '13.00 - 15.00';
+        campaignHour = '13:00 - 15:00';
       } else if (now.hour >= 15 && now.hour < 17) {
-        campaignHour = '15.00 - 17.00';
+        campaignHour = '15:00 - 17:00';
       } else if (now.hour >= 17 && now.hour < 19) {
-        campaignHour = '17.00 - 19.00';
+        campaignHour = '17:00 - 19:00';
       } else if (now.hour >= 19 && now.hour < 21) {
-        campaignHour = '19.00 - 21.00';
+        campaignHour = '19:00 - 21:00';
       } else if (now.hour >= 21 && now.hour < 23) {
-        campaignHour = '21.00 - 23.00';
+        campaignHour = '21:00 - 23:00';
       } else if (now.hour >= 23 || now.hour < 1) {
-        campaignHour = '23.00 - 01.00';
+        campaignHour = '23:00 - 01:00';
+      }
+
+      try {
+        var read = await widget.database.getUsedCampaigns(
+            now.weekday, widget.campaign.campaignCategory1, campaignHour);
+
+        setState(() {
+          count1 = int.parse(read);
+          count1 += 1;
+        });
+
+        if (!widget.campaign.campaignCategory2.contains("Optional")) {
+          var read = await widget.database.getUsedCampaigns(
+              now.weekday, widget.campaign.campaignCategory2, campaignHour);
+
+          setState(() {
+            count2 = 1;
+          });
+
+          setState(() {
+            count2 = int.parse(read);
+            count2 += 1;
+          });
+        }
+      } catch (e) {
+        rethrow;
       }
 
       try {
         await widget.database.addUsedCampaigns({
-          'id': now.toIso8601String(),
-          'campaign_category1': widget.campaign.campaignCategory1,
-          'campaign_category2': widget.campaign.campaignCategory2,
-          'campaign_hour': campaignHour,
-          'campaign_day': now.weekday
+          'day': now.weekday,
+          'campaign_category': widget.campaign.campaignCategory1,
+          'hour': campaignHour,
+          'count': count1,
         });
+        if (!widget.campaign.campaignCategory2.contains("Optional")) {
+          await widget.database.addUsedCampaigns({
+            'day': now.weekday,
+            'campaign_category': widget.campaign.campaignCategory2,
+            'hour': campaignHour,
+            'count': count2,
+          });
+        }
         Navigator.of(context).pop();
       } catch (e) {
         rethrow;
@@ -201,7 +248,9 @@ class _CampaignDetailsCustomerPage extends State<CampaignDetailsCustomerPage> {
                     ),
                   ),
                 ),
-                SizedBox(height: 12,),
+          SizedBox(
+            height: 12,
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[

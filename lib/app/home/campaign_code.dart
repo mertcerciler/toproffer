@@ -6,7 +6,7 @@ class CampaignCode  extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String newCode = this.code.substring(1,this.code.length-1);
+    String newCode = this.code;
     return Container(
       alignment: Alignment.center,
       padding: EdgeInsets.fromLTRB(50, 10, 50, 20),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:login/app/home/models/data_model.dart';
 import 'package:login/app/services/database.dart';
 import './models/sales_data.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
@@ -7,7 +8,8 @@ import 'restaurant_active_campaigns.dart';
 import 'campaign_creator_page.dart';
 
 class RestaurantStatistics extends StatefulWidget {
-  const RestaurantStatistics({Key key, this.database}) : super(key: key);
+  const RestaurantStatistics({Key key, @required this.database})
+      : super(key: key);
   final Database database;
 
   @override
@@ -15,22 +17,19 @@ class RestaurantStatistics extends StatefulWidget {
 }
 
 class _RestaurantStatistics extends State<RestaurantStatistics> {
+  @override
+  void setState(fn) {
+    if (mounted) {
+      super.setState(fn);
+    }
+  }
+
   int _selectedIndex = 2;
   void selectGenerator(BuildContext ctx) {
     Navigator.of(ctx).pushReplacement(
       MaterialPageRoute(
         builder: (_) {
           return CampaignCreatorPage(database: widget.database);
-        },
-      ),
-    );
-  }
-
-  void selectHistory(BuildContext context) {
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-        builder: (_) {
-          return RestaurantStatistics();
         },
       ),
     );
@@ -56,249 +55,278 @@ class _RestaurantStatistics extends State<RestaurantStatistics> {
       if (_selectedIndex == 1) {
         selectGenerator(context);
       } else if (_selectedIndex == 2) {
-        selectHistory(context);
       } else if (_selectedIndex == 0) {
         selectMyCampaigns(context);
       }
     });
   }
 
-  // Defining the data
-  final data = [
-    new SalesData(0, 1500000),
-    new SalesData(1, 1735000),
-    new SalesData(2, 1678000),
-    new SalesData(3, 1890000),
-    new SalesData(4, 1907000),
-    new SalesData(5, 2300000),
-    new SalesData(6, 2360000),
-    new SalesData(7, 1980000),
-    new SalesData(8, 2654000),
-    new SalesData(9, 2789070),
-    new SalesData(10, 3020000),
-    new SalesData(11, 3245900),
-    new SalesData(12, 4098500),
-    new SalesData(13, 4500000),
-    new SalesData(14, 4456500),
-    new SalesData(15, 3900500),
-    new SalesData(16, 5123400),
-    new SalesData(17, 5589000),
-    new SalesData(18, 5940000),
-    new SalesData(19, 6367000),
-  ];
-  final data1 = [
-    new SalesData(0, 1500000),
-    new SalesData(3, 1907000),
-    new SalesData(5, 2789070),
-    new SalesData(10, 4456500),
-    new SalesData(13, 5589000),
-    new SalesData(18, 1980000),
-    new SalesData(19, 4456500),
-  ];
-
-  getData() async {
-    var data = await widget.database.getUsedCampaigns();
-   
-  }
-
-  _getSeriesData() {
-    List<charts.Series<SalesData, int>> series = [
-      charts.Series(
-          id: "Sales",
-          data: data,
-          domainFn: (SalesData series, _) => series.year,
-          measureFn: (SalesData series, _) => series.sales,
-          colorFn: (SalesData series, _) =>
-              charts.MaterialPalette.blue.shadeDefault),
-      charts.Series(
-          id: "Sales",
-          data: data1,
-          domainFn: (SalesData series, _) => series.year,
-          measureFn: (SalesData series, _) => series.sales,
-          colorFn: (SalesData series, _) =>
-              charts.MaterialPalette.red.shadeDefault)
-    ];
-    return series;
-  }
-
-  String group = '';
-  bool monSelected = false;
+  bool monSelected = true;
   bool tueSelected = false;
   bool wedSelected = false;
-  bool thurSelected = false;
+  bool thuSelected = false;
   bool friSelected = false;
   bool satSelected = false;
   bool sunSelected = false;
-
-  Container _daySelection() {
+  String group = '';
+  int selectedDay = 1;
+  String day = "Monday";
+  Container _daySelectionDropdown() {
     return Container(
-      margin: const EdgeInsets.fromLTRB(2, 15, 50, 00),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Container(
-            alignment: Alignment.center,
-            child: Text(
-              'Select Day',
-              style: TextStyle(
-                  color: Colors.blue[900],
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15),
-            ),
-          ),
-          Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-            Text('Mon',
-                style: TextStyle(
-                  color: Colors.blue[900],
-                  fontWeight: FontWeight.bold,
-                )),
-            Radio(
-              value: 'Mon',
-              groupValue: group,
-              onChanged: (T) {
-                print(T);
-                getData();
-                setState(() {
-                  monSelected = true;
-                  tueSelected = false;
-                  wedSelected = false;
-                  thurSelected = false;
-                  friSelected = false;
-                  satSelected = false;
-                  sunSelected = false;
-                  group = T;
-                });
-              },
-            ),
-            Text('Tue',
-                style: TextStyle(
-                  color: Colors.blue[900],
-                  fontWeight: FontWeight.bold,
-                )),
-            Radio(
-                value: 'Tue',
-                groupValue: group,
-                onChanged: (T) {
-                  setState(() {
-                    monSelected = false;
-                    tueSelected = true;
-                    wedSelected = false;
-                    thurSelected = false;
-                    friSelected = false;
-                    satSelected = false;
-                    sunSelected = false;
-                    group = T;
-                  });
-                }),
-            Text('Wed',
-                style: TextStyle(
-                  color: Colors.blue[900],
-                  fontWeight: FontWeight.bold,
-                )),
-            Radio(
-                value: 'Wed',
-                groupValue: group,
-                onChanged: (T) {
-                  setState(() {
-                    monSelected = false;
-                    tueSelected = false;
-                    wedSelected = true;
-                    thurSelected = false;
-                    friSelected = false;
-                    satSelected = false;
-                    sunSelected = false;
-                    group = T;
-                  });
-                }),
-            Text('Thu',
-                style: TextStyle(
-                  color: Colors.blue[900],
-                  fontWeight: FontWeight.bold,
-                )),
-            Radio(
-                value: 'Thu',
-                groupValue: group,
-                onChanged: (T) {
-                  setState(() {
-                    monSelected = false;
-                    tueSelected = false;
-                    wedSelected = false;
-                    thurSelected = true;
-                    friSelected = false;
-                    satSelected = false;
-                    sunSelected = false;
-                    group = T;
-                  });
-                }),
-          ]),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text('Fri',
-                  style: TextStyle(
-                    color: Colors.blue[900],
-                    fontWeight: FontWeight.bold,
-                  )),
-              Radio(
-                  value: 'Fri',
-                  groupValue: group,
-                  onChanged: (T) {
-                    setState(() {
-                      monSelected = false;
-                      tueSelected = false;
-                      wedSelected = false;
-                      thurSelected = false;
-                      friSelected = true;
-                      satSelected = false;
-                      sunSelected = false;
-                      group = T;
-                    });
-                  }),
-              Text('Sat',
-                  style: TextStyle(
-                    color: Colors.blue[900],
-                    fontWeight: FontWeight.bold,
-                  )),
-              Radio(
-                  value: 'Sat',
-                  groupValue: group,
-                  onChanged: (T) {
-                    setState(() {
-                      monSelected = false;
-                      tueSelected = false;
-                      wedSelected = false;
-                      thurSelected = false;
-                      friSelected = false;
-                      satSelected = true;
-                      sunSelected = false;
-                      group = T;
-                    });
-                  }),
-              Text('Sun',
-                  style: TextStyle(
-                    color: Colors.blue[900],
-                    fontWeight: FontWeight.bold,
-                  )),
-              Radio(
-                  value: 'Sun',
-                  groupValue: group,
-                  onChanged: (T) {
-                    setState(() {
-                      monSelected = false;
-                      tueSelected = false;
-                      wedSelected = false;
-                      thurSelected = false;
-                      friSelected = false;
-                      satSelected = false;
-                      sunSelected = true;
-                      group = T;
-                    });
-                  })
-            ],
-          ),
-        ],
+      alignment: Alignment(0.0, 0.0),
+      child: DropdownButton<String>(
+        value: day,
+        icon: Icon(Icons.arrow_drop_down),
+        iconSize: 35,
+        elevation: 16,
+        style: TextStyle(color: Colors.black87),
+        underline: Container(
+          height: 2,
+          color: Colors.blue[200],
+        ),
+        onChanged: (String newDay) {
+          setState(() {
+            day = newDay;
+            if (day == "Monday") {
+              monSelected = true;
+              tueSelected = false;
+              wedSelected = false;
+              thuSelected = false;
+              friSelected = false;
+              satSelected = false;
+              sunSelected = false;
+            }
+            if (day == "Tuesday") {
+              monSelected = false;
+              tueSelected = true;
+              wedSelected = false;
+              thuSelected = false;
+              friSelected = false;
+              satSelected = false;
+              sunSelected = false;
+            }
+            if (day == "Wednesday") {
+              monSelected = false;
+              tueSelected = false;
+              wedSelected = true;
+              thuSelected = false;
+              friSelected = false;
+              satSelected = false;
+              sunSelected = false;
+            }
+            if (day == "Thursday") {
+              monSelected = false;
+              tueSelected = false;
+              wedSelected = false;
+              thuSelected = true;
+              friSelected = false;
+              satSelected = false;
+              sunSelected = false;
+            }
+            if (day == "Friday") {
+              monSelected = false;
+              tueSelected = false;
+              wedSelected = false;
+              thuSelected = false;
+              friSelected = true;
+              satSelected = false;
+              sunSelected = false;
+            }
+            if (day == "Saturday") {
+              monSelected = false;
+              tueSelected = false;
+              wedSelected = false;
+              thuSelected = false;
+              friSelected = false;
+              satSelected = true;
+              sunSelected = false;
+            }
+            if (day == "Sunday") {
+              monSelected = false;
+              tueSelected = false;
+              wedSelected = false;
+              thuSelected = false;
+              friSelected = false;
+              satSelected = false;
+              sunSelected = true;
+            }
+          });
+        },
+        items: <String>[
+          'Monday',
+          'Tuesday',
+          'Wednesday',
+          'Thursday',
+          'Friday',
+          'Saturday',
+          'Sunday',
+        ].map<DropdownMenuItem<String>>((String value) {
+          return DropdownMenuItem<String>(
+            value: value,
+            child: Text(value),
+          );
+        }).toList(),
       ),
     );
+  }
+
+  List<String> types = [
+    'Alcohol',
+    'Fast Food',
+    'Traditional Food',
+    'International Cousine',
+    'Bakery',
+    'Coffee'
+  ];
+  List<String> hours = [
+    '01:00 - 09:00',
+    '09:00 - 11:00',
+    '11:00 - 13:00',
+    '13:00 - 15:00',
+    '15:00 - 17:00',
+    '17:00 - 19:00',
+    '19:00 - 21:00',
+    '21:00 - 23:00',
+    '23:00 - 01:00'
+  ];
+  static DataModel d1 = new DataModel(0, 0);
+  static List<DataModel> alc = [d1, d1, d1, d1, d1, d1, d1, d1, d1];
+  static List<DataModel> fastFood = [d1, d1, d1, d1, d1, d1, d1, d1, d1];
+  static List<DataModel> coffee = [d1, d1, d1, d1, d1, d1, d1, d1, d1];
+  static List<DataModel> bakery = [d1, d1, d1, d1, d1, d1, d1, d1, d1];
+  static List<DataModel> traditionalFood = [d1, d1, d1, d1, d1, d1, d1, d1, d1];
+  static List<DataModel> internationalCousine = [
+    d1,
+    d1,
+    d1,
+    d1,
+    d1,
+    d1,
+    d1,
+    d1,
+    d1
+  ];
+  static List<DataModel> breakfast = [d1, d1, d1, d1, d1, d1, d1, d1, d1];
+
+  _getData(int day) async {
+    int index = 0;
+    for (var hour in hours) {
+      var count = await widget.database.getUsedCampaigns(day, 'Alcohol', hour);
+      DataModel d =
+          new DataModel(int.parse(hour.substring(0, 2)), int.parse(count));
+      alc[index] = d;
+      index += 1;
+    }
+    index = 0;
+    for (var hour in hours) {
+      var count =
+          await widget.database.getUsedCampaigns(day, 'Fast Food', hour);
+      DataModel d =
+          new DataModel(int.parse(hour.substring(0, 2)), int.parse(count));
+      fastFood[index] = d;
+      index += 1;
+    }
+    index = 0;
+    for (var hour in hours) {
+      var count = await widget.database.getUsedCampaigns(day, 'Coffee', hour);
+      DataModel d =
+          new DataModel(int.parse(hour.substring(0, 2)), int.parse(count));
+      coffee[index] = d;
+      index += 1;
+    }
+    index = 0;
+    for (var hour in hours) {
+      var count = await widget.database.getUsedCampaigns(day, 'Bakery', hour);
+      DataModel d =
+          new DataModel(int.parse(hour.substring(0, 2)), int.parse(count));
+      bakery[index] = d;
+      index += 1;
+    }
+    index = 0;
+    for (var hour in hours) {
+      var count =
+          await widget.database.getUsedCampaigns(day, 'Traditional Food', hour);
+      DataModel d =
+          new DataModel(int.parse(hour.substring(0, 2)), int.parse(count));
+      traditionalFood[index] = d;
+      index += 1;
+    }
+    index = 0;
+    for (var hour in hours) {
+      var count = await widget.database
+          .getUsedCampaigns(day, 'International Cousine', hour);
+      DataModel d =
+          new DataModel(int.parse(hour.substring(0, 2)), int.parse(count));
+      internationalCousine[index] = d;
+      index += 1;
+    }
+    index = 0;
+    for (var hour in hours) {
+      var count =
+          await widget.database.getUsedCampaigns(day, 'Breakfast', hour);
+      DataModel d =
+          new DataModel(int.parse(hour.substring(0, 2)), int.parse(count));
+      breakfast[index] = d;
+      index += 1;
+    }
+  }
+
+  _displayData(int day) {
+    _getData(day);
+
+    print(alc[0].count);
+    List<charts.Series<DataModel, int>> series = [
+      charts.Series(
+          id: "Alcohol",
+          data: alc,
+          domainFn: (DataModel series, _) => series.hour,
+          measureFn: (DataModel series, _) => series.count,
+          colorFn: (DataModel series, _) =>
+              charts.MaterialPalette.blue.shadeDefault),
+      charts.Series(
+          id: "Breakfast",
+          data: breakfast,
+          domainFn: (DataModel series, _) => series.hour,
+          measureFn: (DataModel series, _) => series.count,
+          colorFn: (DataModel series, _) =>
+              charts.MaterialPalette.red.shadeDefault),
+      charts.Series(
+          id: "Coffee",
+          data: coffee,
+          domainFn: (DataModel series, _) => series.hour,
+          measureFn: (DataModel series, _) => series.count,
+          colorFn: (DataModel series, _) =>
+              charts.MaterialPalette.green.shadeDefault),
+      charts.Series(
+          id: "Fast Food",
+          data: fastFood,
+          domainFn: (DataModel series, _) => series.hour,
+          measureFn: (DataModel series, _) => series.count,
+          colorFn: (DataModel series, _) =>
+              charts.MaterialPalette.yellow.shadeDefault),
+      charts.Series(
+          id: "Trad. Food",
+          data: traditionalFood,
+          domainFn: (DataModel series, _) => series.hour,
+          measureFn: (DataModel series, _) => series.count,
+          colorFn: (DataModel series, _) =>
+              charts.MaterialPalette.gray.shadeDefault),
+      charts.Series(
+          id: "Bakery",
+          data: bakery,
+          domainFn: (DataModel series, _) => series.hour,
+          measureFn: (DataModel series, _) => series.count,
+          colorFn: (DataModel series, _) =>
+              charts.MaterialPalette.pink.shadeDefault),
+      charts.Series(
+          id: "Int. Cousine",
+          data: internationalCousine,
+          domainFn: (DataModel series, _) => series.hour,
+          measureFn: (DataModel series, _) => series.count,
+          colorFn: (DataModel series, _) =>
+              charts.MaterialPalette.purple.shadeDefault),
+    ];
+    return series;
   }
 
   @override
@@ -308,33 +336,73 @@ class _RestaurantStatistics extends State<RestaurantStatistics> {
         title: Text('Line Chart'),
         centerTitle: true,
       ),
-      body: Center(
-        child: Container(
-          height: 550,
-          padding: EdgeInsets.all(10),
-          child: Card(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: <Widget>[
-                  _daySelection(),
-                  Text(
-                    "Sales of a company over the years",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Expanded(
-                    child: new charts.LineChart(
-                      _getSeriesData(),
-                      animate: true,
-                    ),
-                  )
-                ],
-              ),
+      body: Container(
+        child: SingleChildScrollView(
+          child: Column(children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Select Day: ',
+                  style: TextStyle(
+                      color: Colors.blue, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(
+                  width: 20,
+                ),
+                _daySelectionDropdown(),
+              ],
             ),
-          ),
+            Center(
+              child: Container(
+                height: 550,
+                padding: EdgeInsets.all(10),
+                child: Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      children: <Widget>[
+                        Text(
+                          "Sales of a company over the years",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Expanded(
+                          child: new charts.LineChart(
+                            monSelected ?
+                            _displayData(1):
+                            tueSelected ? 
+                            _displayData(2):
+                            wedSelected ?
+                            _displayData(3):
+                            thuSelected ? 
+                            _displayData(4):
+                            friSelected ?
+                            _displayData(5) :
+                            satSelected ? 
+                            _displayData(6):
+                            sunSelected ?
+                            _displayData(7):
+                            _displayData(1),
+                            animate: true,
+                            behaviors: [
+                              new charts.SeriesLegend(
+                                  position: charts.BehaviorPosition.top,
+                                  desiredMaxColumns: 4,
+                                  entryTextStyle:
+                                      charts.TextStyleSpec(fontSize: 10)),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            )
+          ]),
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(

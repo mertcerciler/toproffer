@@ -32,7 +32,8 @@ abstract class Database {
   Future<void> addFollowers(UserModel user, RestaurantModel restaurant);
   Future<void> deleteCampaign(CampaignModel campaign);
   Future<List<Map<String, dynamic>>> getCoordinates(); 
-  Future<List<Map<String, dynamic>>> getUsedCampaigns();
+  Future<String> getUsedCampaigns(int day, String category, String hour);
+  Future<Map<String, dynamic>> getUsedCampaignsDay(int day, String category);
   Future<void> deleteAllCampaign(CampaignModel campaign);
 }
 
@@ -152,8 +153,8 @@ class FirestoreDatabase implements Database {
 
   Future<void> addUsedCampaigns(Map<String, dynamic> data) async {
     await _service.setData(
-      data: data,
-      path: APIPath.total_used_campaigns(data['id'])
+      data: {'count': data['count']},
+      path: APIPath.total_used_campaigns(data['day'], data['campaign_category'], data['hour'])
     );
   }
   
@@ -247,22 +248,20 @@ class FirestoreDatabase implements Database {
     }
   }
 
-  Future<List<Map<String, dynamic>>> getUsedCampaigns() async {
-    final path = APIPath.get_total_used_campaigns();
+  Future<String> getUsedCampaigns(int day, String category, String hour) async {
+    final path = APIPath.get_total_used_campaigns(day, category, hour);
+    final reference = Firestore.instance.document(path);
+    final snapshots = reference.snapshots();
+    final map = snapshots.map((snapshot) => snapshot.data['count'].toString());
+    var list = await map.first;
+    return list;
+  }
+
+  Future<Map<String, dynamic>> getUsedCampaignsDay(int day, String category) async {
+    final path = APIPath.get_total_used_campaigns_2(day, category);
     final reference = Firestore.instance.collection(path);
     final snapshots = reference.snapshots();
-    List<Map<String, dynamic>> list = [];
-    final map = snapshots.map((snapshot) => snapshot.documents.map(
-        (snapshot) => 
-          {
-           'campaign_category1': snapshot.data['campaign_category1'],
-           'campaign_category2': snapshot.data['campaign_category2'],
-           'campaign_day': snapshot.data['campaign_day'],
-           'campaign_hour': snapshot.data['campaign_hour'],
-          }
-      ).toList());
-    list = await map.first;
-    return list;
+    final map = snapshots.map((snapshot) => {});
   }
 
   Future<List<Map<String, dynamic>>> getCoordinates() async {

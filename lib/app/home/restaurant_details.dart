@@ -34,8 +34,6 @@ class _RestaurantDetailsPage extends State<RestaurantDetailsPage> {
 
   Future<void> addFollowers() async {
     UserModel user = await getUserModel();
-    print(widget.restaurant.id);
-    print(user.id);
     await widget.database.addFollowers(user, widget.restaurant);
   }
 
