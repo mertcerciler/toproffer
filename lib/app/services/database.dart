@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:login/app/home/models/campaign_model.dart';
@@ -19,7 +17,9 @@ abstract class Database {
   Stream<List<CampaignModel>> showActiveCampaignsStream();
   Stream<List<CampaignModel>> campaignStreamMap(String id);
   Stream<List<CampaignModel>> campaignStream();
+  Stream<List<CampaignModel>> campaignStreamInfo(RestaurantModel restaurant);
   Stream<List<CampaignModel>> campaignHistoryStream();
+  Stream<List<CampaignModel>> campaignHistoryStreamInfo(RestaurantModel restaurantModel);
   Future<void> createAllCampaigns(CampaignModel campaign, String campaignId);
   Stream<String>  getUserInsterestsStream();
   Future<void> setUserInterests(List<String> interests); 
@@ -35,6 +35,8 @@ abstract class Database {
   Future<String> getUsedCampaigns(int day, String category, String hour);
   Future<Map<String, dynamic>> getUsedCampaignsDay(int day, String category);
   Future<void> deleteAllCampaign(CampaignModel campaign);
+  Future<bool> checkFollowers(RestaurantModel restaurant);
+  Future<int> followersLength(RestaurantModel restaurant);
 }
 
 abstract class DatabaseUser {
@@ -107,6 +109,29 @@ class FirestoreDatabase implements Database {
     ).toString()); 
   }
 
+  Future<bool> checkFollowers(RestaurantModel restaurant) async {
+    final path = APIPath.get_restaurant_followers(restaurant.id);
+    final reference = Firestore.instance.collection(path);
+    final snapshots = reference.snapshots();
+    final map = snapshots.map((snapshot) => snapshot.documents.map(
+      (snapshot) {
+        return snapshot.data['id'];
+    }).toList());
+    var list = await map.first;
+    return list.contains(uid);
+  }
+
+  Future<int> followersLength(RestaurantModel restaurant)  {
+    final path = APIPath.get_restaurant_followers(restaurant.id);
+    final reference = Firestore.instance.collection(path);
+    final snapshots = reference.snapshots();
+    final map = snapshots.map((snapshot) => snapshot.documents.map(
+      (snapshot) {
+        return snapshot.data['id'];
+    }).toList());
+    return map.length;
+  }
+
   Future<void> setUserInterests(List<String> interests) async {
     await _service.updateData(
       data: {'interests': interests},
@@ -160,11 +185,11 @@ class FirestoreDatabase implements Database {
   
   Future<void> addFollowers(UserModel user, RestaurantModel restaurant) async {
     await _service.setData(
-      path: APIPath.following_restaurants(uid),
+      path: APIPath.following_restaurants(uid, restaurant.id),
       data: restaurant.toMap(restaurant.id),
     );
     await _service.setData(
-      path: APIPath.restaurant_followers(restaurant.id),
+      path: APIPath.restaurant_followers(restaurant.id, user.id),
       data: user.toMap(user.id)
     );
   }
@@ -416,8 +441,79 @@ class FirestoreDatabase implements Database {
     ).toList());
   }
 
+  Stream<List<CampaignModel>> campaignStreamInfo(RestaurantModel restaurant){
+    final path = APIPath.active_campaigns(restaurant.id);
+    final reference = Firestore.instance.collection(path);
+    final snapshots = reference.snapshots();
+    return snapshots.map((snapshot) => snapshot.documents.map(
+      (snapshot) {
+        if (snapshot.data['campaign_type'] == "Momentarily"){ 
+          return CampaignModel(
+            id: snapshot.data['id'],
+            title: snapshot.data['title'],
+            content: snapshot.data['content'],
+            campaignCategory1: snapshot.data['campaign_category_1'],
+            campaignCategory2: snapshot.data['campaign_category_2'],
+            newPrice: snapshot.data['newPrice'],
+            oldPrice: snapshot.data['oldPrice'], 
+            campaignFinished: snapshot.data['campaign_finished'].toDate(),
+            campaignStarted: snapshot.data['campaign_started'].toDate(),
+            campaignType: snapshot.data['campaign_type'], 
+          );
+        } else {
+          return CampaignModel(
+            id: snapshot.data['id'],
+            title: snapshot.data['title'],
+            content: snapshot.data['content'],
+            campaignCategory1: snapshot.data['campaign_category_1'],
+            campaignCategory2: snapshot.data['campaign_category_2'],
+            newPrice: snapshot.data['newPrice'],
+            oldPrice: snapshot.data['oldPrice'], 
+            campaignDays: snapshot.data['campaign_days'],
+            endingHour: snapshot.data['ending_hour'],
+            startingHour: snapshot.data['starting_hour'],
+            campaignType: snapshot.data['campaign_type'], 
+          );
+        }
+      }
+    ).toList());
+  }  
+
   Stream<List<CampaignModel>> campaignHistoryStream() {
     final path = APIPath.get_old_campaigns(uid);
+    final reference = Firestore.instance.collection(path);
+    final snapshots = reference.snapshots();
+    return snapshots.map((snapshot) => snapshot.documents.map(
+      (snapshot) {
+        if (snapshot.data['campaign_type'] == "Momentarily"){ 
+          return CampaignModel(
+            title: snapshot.data['title'],
+            content: snapshot.data['content'],
+            campaignCategory1: snapshot.data['campaign_category_1'],
+            campaignCategory2: snapshot.data['campaign_category_2'],
+            newPrice: snapshot.data['newPrice'],
+            oldPrice: snapshot.data['oldPrice'], 
+            campaignType: snapshot.data['campaign_type'], 
+          );
+        } else {
+          return CampaignModel(
+            title: snapshot.data['title'],
+            content: snapshot.data['content'],
+            campaignCategory1: snapshot.data['campaign_category_1'],
+            campaignCategory2: snapshot.data['campaign_category_2'],
+            newPrice: snapshot.data['newPrice'],
+            oldPrice: snapshot.data['oldPrice'], 
+            endingHour: snapshot.data['ending_hour'],
+            startingHour: snapshot.data['starting_hour'],
+            campaignType: snapshot.data['campaign_type'], 
+          );
+        }
+      }
+    ).toList());
+  }
+
+  Stream<List<CampaignModel>> campaignHistoryStreamInfo(RestaurantModel restaurant) {
+    final path = APIPath.get_old_campaigns(restaurant.id);
     final reference = Firestore.instance.collection(path);
     final snapshots = reference.snapshots();
     return snapshots.map((snapshot) => snapshot.documents.map(

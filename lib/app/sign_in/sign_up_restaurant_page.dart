@@ -8,22 +8,26 @@ import 'package:provider/provider.dart';
 import 'package:login/common_widgets/form_submit_button.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:google_maps_webservice/places.dart';
-
+import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:path/path.dart';
+import 'dart:io';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 const kGoogleApiKey = "AIzaSyBDZPq6C95D8PJ9jQqORGMnWOCp_WXSmaY";
 GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: kGoogleApiKey);
 
-class SignUpRestaurantPage extends StatefulWidget {  
+class SignUpRestaurantPage extends StatefulWidget {
   SignUpRestaurantPage({@required this.bloc});
   final SignUpRestaurantBloc bloc;
 
-  static Widget create(BuildContext context){
+  static Widget create(BuildContext context) {
     final database = Provider.of<DatabaseUser>(context, listen: false);
     final auth = Provider.of<AuthBase>(context, listen: false);
     return Provider<SignUpRestaurantBloc>(
       create: (context) => SignUpRestaurantBloc(auth: auth, database: database),
       child: Consumer<SignUpRestaurantBloc>(
-        builder: (context, bloc, _) => SignUpRestaurantPage(bloc: bloc),  
+        builder: (context, bloc, _) => SignUpRestaurantPage(bloc: bloc),
       ),
       dispose: (context, bloc) => bloc.dispose(),
     );
@@ -42,10 +46,7 @@ class _SignUpRestaurantPageState extends State<SignUpRestaurantPage> {
   TextEditingController cityInputController;
   TextEditingController postalCodeInputController;
   TextEditingController addressInputController;
-
-
- 
-
+  File _image;
   String group = '';
 
   @override
@@ -59,41 +60,39 @@ class _SignUpRestaurantPageState extends State<SignUpRestaurantPage> {
     cityInputController = TextEditingController();
     addressInputController = TextEditingController();
     super.initState();
-  } 
+  }
 
-Future<void> _signOut(BuildContext context) async {
+  Future<void> _signOut(BuildContext context) async {
     try {
       final auth = Provider.of<AuthBase>(context, listen: false);
-      await auth.signOut();    
-    }
-    catch(e) {
+      await auth.signOut();
+    } catch (e) {
       print(e.toString());
     }
-  } 
+  }
 
   Future<void> _confirmSignOut(BuildContext context) async {
     final didRequestSignOut = await PlatformAlertDialog(
-      title: 'Logout',
-      content: 'Are you sure that you want to logout', 
-      cancelActionText: 'Cancel',
-      defaultActionText: 'Logout'
-    ).show(context);
+            title: 'Logout',
+            content: 'Are you sure that you want to logout',
+            cancelActionText: 'Cancel',
+            defaultActionText: 'Logout')
+        .show(context);
     if (didRequestSignOut == true) {
       print('Mert');
       _signOut(context);
     }
   }
-  
+
   TextField _buildUsernameTextField() {
     return TextField(
       controller: usernameInputController,
       decoration: InputDecoration(
-        labelText: 'Username',
-        labelStyle: TextStyle(
-          fontWeight: FontWeight.bold,
-          color: Colors.blue[900]),
-        focusedBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.blue[900]))),
+          labelText: 'Username',
+          labelStyle:
+              TextStyle(fontWeight: FontWeight.bold, color: Colors.blue[900]),
+          focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.blue[900]))),
       onChanged: widget.bloc.updateUsername,
     );
   }
@@ -102,12 +101,11 @@ Future<void> _signOut(BuildContext context) async {
     return TextField(
       controller: restaurantNameInputController,
       decoration: InputDecoration(
-        labelText: 'Restaurant Name',
-        labelStyle: TextStyle(
-          fontWeight: FontWeight.bold,
-          color: Colors.blue[900]),
-        focusedBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color:Colors.blue[900]))),
+          labelText: 'Restaurant Name',
+          labelStyle:
+              TextStyle(fontWeight: FontWeight.bold, color: Colors.blue[900]),
+          focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.blue[900]))),
       onChanged: widget.bloc.updateRestaurantName,
     );
   }
@@ -116,14 +114,13 @@ Future<void> _signOut(BuildContext context) async {
     return TextField(
       controller: passwordInputController,
       decoration: InputDecoration(
-        labelText: 'Password',
-        labelStyle: TextStyle(
-          fontWeight: FontWeight.bold,
-          color: Colors.blue[900]),
-        focusedBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.blue[900]))),
-          obscureText: true,
-          onChanged: widget.bloc.updatePassword,
+          labelText: 'Password',
+          labelStyle:
+              TextStyle(fontWeight: FontWeight.bold, color: Colors.blue[900]),
+          focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.blue[900]))),
+      obscureText: true,
+      onChanged: widget.bloc.updatePassword,
     );
   }
 
@@ -131,48 +128,45 @@ Future<void> _signOut(BuildContext context) async {
     return TextField(
       controller: passwordConfirmationController,
       decoration: InputDecoration(
-        labelText: 'Confirm Password',
-        labelStyle: TextStyle(
-          fontWeight: FontWeight.bold,
-          color: Colors.blue[900]),
-        focusedBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.blue[900]))),
-          obscureText: true,
+          labelText: 'Confirm Password',
+          labelStyle:
+              TextStyle(fontWeight: FontWeight.bold, color: Colors.blue[900]),
+          focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.blue[900]))),
+      obscureText: true,
     );
   }
 
   TextFormField _buildEmailTextField() {
     return TextFormField(
       controller: emailInputController,
-      decoration: InputDecoration(labelText: 'Email',
-        labelStyle: TextStyle(
-          fontWeight: FontWeight.bold,
-          color: Colors.blue[900]),
-        focusedBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.blue[900]))),
-          onChanged: widget.bloc.updateEmail,
-   );
+      decoration: InputDecoration(
+          labelText: 'Email',
+          labelStyle:
+              TextStyle(fontWeight: FontWeight.bold, color: Colors.blue[900]),
+          focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.blue[900]))),
+      onChanged: widget.bloc.updateEmail,
+    );
   }
 
   TextFormField _buildAddressTextField() {
     return TextFormField(
       controller: addressInputController,
-      decoration: InputDecoration(labelText: 'Address',
-        labelStyle: TextStyle(
-          fontWeight: FontWeight.bold,
-          color: Colors.blue[900]),
-        focusedBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.blue[900]))),
-          onChanged: widget.bloc.updateAddress,
-   );
+      decoration: InputDecoration(
+          labelText: 'Address',
+          labelStyle:
+              TextStyle(fontWeight: FontWeight.bold, color: Colors.blue[900]),
+          focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.blue[900]))),
+      onChanged: widget.bloc.updateAddress,
+    );
   }
-
-
 
   Future<Null> displayPrediction(Prediction p) async {
     if (p != null) {
       PlacesDetailsResponse detail =
-      await _places.getDetailsByPlaceId(p.placeId);
+          await _places.getDetailsByPlaceId(p.placeId);
 
       var placeId = p.placeId;
       double lat = detail.result.geometry.location.lat;
@@ -189,125 +183,186 @@ Future<void> _signOut(BuildContext context) async {
     }
   }
 
-  RaisedButton _buildAddressPrediction() {
+  RaisedButton _buildAddressPrediction(BuildContext context) {
     return RaisedButton(
-          onPressed: () async {
-            // show input autocomplete with selected mode
-            // then get the Prediction selected
-            Prediction p = await PlacesAutocomplete.show(
-                context: context, apiKey: kGoogleApiKey,
-                mode: Mode.overlay,
-                language: "tr",
-              );
-            displayPrediction(p);
-          },
-          child: Text('Find address'),
-
-        ); 
+      onPressed: () async {
+        // show input autocomplete with selected mode
+        // then get the Prediction selected
+        Prediction p = await PlacesAutocomplete.show(
+          context: context,
+          apiKey: kGoogleApiKey,
+          mode: Mode.overlay,
+          language: "tr",
+        );
+        displayPrediction(p);
+      },
+      child: Text('Find address'),
+    );
   }
 
-  
   Widget _buildChildren(BuildContext context) {
-       return ListView(  
-          children: <Widget>[            
-            Column(              
-              children: <Widget>[
-                Container( 
-                  child: Stack(
-                    children: <Widget>[                     
-                      Container(
-                        padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),                        
-                        child: CircleAvatar(
+    return ListView(
+      children: <Widget>[
+        Column(
+          children: <Widget>[
+            
+            Container(
+              child: Stack(
+                children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
+                    child: CircleAvatar(
                         backgroundColor: Colors.transparent,
-                        radius:100.0,
-                        child: Image.asset("assets/logo.jpeg")
-                        ),
-                        ),                      
-                    ],
-                 ),
-                ),
-                Container(
-                    padding: EdgeInsets.only(top: 35.0, left: 20.0, right: 20.0),
-                    child: Column(
-                      children: <Widget>[
-                        _buildUsernameTextField(),
-                        SizedBox(height: 0.0),
-                        _buildRestaurantNameTextField(),
-                        SizedBox(height: 5.0),
-                        _buildPasswordTextField(),
-                        SizedBox(height: 0.0),
-                        _buildConfirmPasswordTextField(),
-                        _buildEmailTextField(),                
-                        _buildAddressPrediction(),
-                        SizedBox(height: 30,),
-                        Container(
-                          height: 40.0,
-                          child: InkWell(
-                            onTap: (){
-                              Navigator.of(context).pushNamed('/login');//login sayfasının adı gelicek
-                            },
-                          child: Material(
-                            borderRadius: BorderRadius.circular(20.0),
-                            shadowColor: Colors.blue[900],
-                            color: Colors.grey[50],
-                            elevation: 7.0,
-                            child: FormSubmitButton(
-                              onPressed: () => widget.bloc.createRestaurant(context),
-                              text: 'Sign up',
-                            ),
-                          ),
-                          ),
-                        ),
-                      ],
-                       )),
-                SizedBox(height: 15.0),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                        radius: 100.0,
+                        child: Image.asset("assets/logo.jpeg")),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+                padding: EdgeInsets.only(top: 35.0, left: 20.0, right: 20.0),
+                child: Column(
                   children: <Widget>[
-                    Text(
-                      'Already have an account ?',
-                    ),
-                    SizedBox(width: 5.0),
-                    InkWell(
-                      onTap: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: Text(
-                        'Sign in',
-                        style: TextStyle(
-                          color: Colors.blue[900],
-                          fontWeight: FontWeight.bold,
-                          decoration: TextDecoration.underline),
+                    _buildUsernameTextField(),
+                    SizedBox(height: 0.0),
+                    _buildRestaurantNameTextField(),
+                    SizedBox(height: 5.0),
+                    _buildPasswordTextField(),
+                    SizedBox(height: 0.0),
+                    _buildConfirmPasswordTextField(),
+                    _buildEmailTextField(),
+                    _buildAddressPrediction(context),
+                    Align(
+                    alignment: Alignment.center,
+                    child: CircleAvatar(
+                      radius: 100,
+                      backgroundColor: Color(0xff476cfb),
+                      child: ClipOval(
+                        child: new SizedBox(
+                          width: 180.0,
+                          height: 180.0,
+                          child: (_image!=null)?Image.file(
+                            _image,
+                            fit: BoxFit.fill,
+                          ):Image.network(
+                            "https://images.unsplash.com/photo-1502164980785-f8aa41d53611?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60",
+                            fit: BoxFit.fill,
+                          ),
+                        ),
                       ),
-                    )
+                    ),
+                  ),
+                    RaisedButton(
+                                onPressed: ()=>  getImage(),
+                                color: Colors.green,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    Icon(
+                                      Icons.collections,
+                                      color: Colors.white,
+                                    ),
+                                    Text(
+                                      'Get a photo',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                    )
+                                  ],
+                                )),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    Container(
+                      height: 40.0,
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.of(context).pushNamed(
+                              '/login'); //login sayfasının adı gelicek
+                        },
+                        child: Material(
+                          borderRadius: BorderRadius.circular(20.0),
+                          shadowColor: Colors.blue[900],
+                          color: Colors.grey[50],
+                          elevation: 7.0,
+                          child: FormSubmitButton(
+                            onPressed: () {
+                                widget.bloc.createRestaurant(context);
+                                uploadPic(context);
+                            },
+                            text: 'Sign up',
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
+                )),
+            SizedBox(height: 15.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  'Already have an account ?',
+                ),
+                SizedBox(width: 5.0),
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text(
+                    'Sign in',
+                    style: TextStyle(
+                        color: Colors.blue[900],
+                        fontWeight: FontWeight.bold,
+                        decoration: TextDecoration.underline),
+                  ),
                 )
               ],
-            ),
+            )
           ],
-        ); 
+        ),
+      ],
+    );
   }
+   Future getImage() async {
+      var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+
+      setState(() {
+        _image = image;
+        print('Image Path $_image');
+      });
+    }
+
+    Future uploadPic(BuildContext context) async {
+      String fileName = basename(_image.path);
+      StorageReference firebaseStorageRef =
+          FirebaseStorage.instance.ref().child(fileName);
+      StorageUploadTask uploadTask = firebaseStorageRef.putFile(_image);
+      StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
+      setState(() {
+        print("Profile Picture uploaded");
+      });
+    }
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Register Restaurant"),
-        actions: <Widget>[ 
+        actions: <Widget>[
           FlatButton(
             child: Text(
-              'Logout', 
-              style: TextStyle(
-                fontSize: 18.0,
-                color: Colors.white
-              ),
+              'Logout',
+              style: TextStyle(fontSize: 18.0, color: Colors.white),
             ),
             onPressed: () => _confirmSignOut(context),
           ),
         ],
       ),
-      body: _buildChildren(context),
+      body:  _buildChildren(context),
+          
+      
     );
   }
-  
-  
 }

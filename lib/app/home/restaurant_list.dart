@@ -2,13 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:login/app/home/campaign_creator_page.dart';
 import 'package:login/app/home/campaign_list_page_2.dart';
 import 'package:login/app/home/lists/list_item_builder.dart';
-import 'package:login/app/home/models/campaign_model.dart';
-import 'package:login/app/home/restaurant_active_campaigns.dart';
 import 'package:login/app/services/auth.dart';
 import 'package:login/app/services/database.dart';
 import 'package:login/common_widgets/platform_alert_dialog.dart';
 import 'package:provider/provider.dart';
-import 'lists/restaurant_active_campaigns_list_2.dart';
+
 import 'lists/restaurant_list_item.dart';
 import 'models/restaurant_model.dart';
 import 'package:login/app/home/map.dart';

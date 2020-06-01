@@ -15,11 +15,14 @@ class APIPath {
   static String token(String uid) =>
     'users/$uid/tokens/$uid'; 
 
-  static String following_restaurants(String uid) => 
-    'users/$uid/user_type/customers/following_restaurants/$uid';
+  static String following_restaurants(String uid, String rid) => 
+    'users/$uid/user_type/customers/following_restaurants/$rid';
 
-  static String restaurant_followers(String uid) => 
-    'users/$uid/user_type/restaurants/restaurant_followers/$uid';
+  static String restaurant_followers(String uid, String cid) => 
+    'users/$uid/user_type/restaurants/restaurant_followers/$cid';
+
+  static String get_restaurant_followers(String uid) => 
+    'users/$uid/user_type/restaurants/restaurant_followers/';
 
   static String restaurant_details(String uid) => 
     'users/$uid/user_type/restaurants/restaurant_details/$uid';

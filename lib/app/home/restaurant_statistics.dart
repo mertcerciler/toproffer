@@ -23,6 +23,24 @@ class _RestaurantStatistics extends State<RestaurantStatistics> {
       super.setState(fn);
     }
   }
+  bool monSelected;
+  bool tueSelected;
+  bool wedSelected;
+  bool thuSelected;
+  bool friSelected;
+  bool satSelected;
+  bool sunSelected;
+
+  @override
+  void initState() {
+    monSelected = true;
+    tueSelected = false;
+    wedSelected = false;
+    thuSelected = false;
+    friSelected = false;
+    satSelected = false;
+    sunSelected = false;
+  } 
 
   int _selectedIndex = 2;
   void selectGenerator(BuildContext ctx) {
@@ -61,13 +79,7 @@ class _RestaurantStatistics extends State<RestaurantStatistics> {
     });
   }
 
-  bool monSelected = true;
-  bool tueSelected = false;
-  bool wedSelected = false;
-  bool thuSelected = false;
-  bool friSelected = false;
-  bool satSelected = false;
-  bool sunSelected = false;
+  
   String group = '';
   int selectedDay = 1;
   String day = "Monday";

@@ -3,11 +3,16 @@ import 'package:login/app/home/models/restaurant_model.dart';
 import 'package:login/app/services/database.dart';
 import 'package:provider/provider.dart';
 
+import 'lists/list_item_builder.dart';
+import 'lists/restaurant_active_campaigns_list_2.dart';
+import 'lists/restaurant_history_campaigns_list.dart';
+import 'models/campaign_model.dart';
 import 'models/user_model.dart';
 
-
 class RestaurantDetailsPage extends StatefulWidget {
-  RestaurantDetailsPage({Key key, this.title, @required this.restaurant, @required this.database}) : super(key: key);
+  RestaurantDetailsPage(
+      {Key key, this.title, @required this.restaurant, @required this.database})
+      : super(key: key);
   final String title;
   final RestaurantModel restaurant;
   final Database database;
@@ -20,11 +25,26 @@ class _RestaurantDetailsPage extends State<RestaurantDetailsPage> {
   int _selectedIndex = 2;
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-
+  static bool isFollowing = false;
+  static int followers = 0;
+  bool info = true;
+  bool active = false;
+  bool old = false;
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  Future<void> checkFollowing() async {
+    var followersList = await widget.database.checkFollowers(widget.restaurant);
+    isFollowing = followersList;
+    print(isFollowing);
+  }
+
+  Future<int> getFollowersLength() async {
+    var length = await widget.database.followersLength(widget.restaurant);
+    followers = length;
   }
 
   Future<UserModel> getUserModel() async {
@@ -37,8 +57,38 @@ class _RestaurantDetailsPage extends State<RestaurantDetailsPage> {
     await widget.database.addFollowers(user, widget.restaurant);
   }
 
+  Widget _buildActiveContents(BuildContext context) {
+    return StreamBuilder<List<CampaignModel>>(
+      stream: widget.database.campaignStreamInfo(widget.restaurant),
+      builder: (context, snapshot) {
+        return ListItemBuilder<CampaignModel>(
+            snapshot: snapshot,
+            itemBuilder: (context, campaign) => RestaurantCampaignList(
+                  campaign: campaign,
+                  database: widget.database,
+                ));
+      },
+    );
+  }
+
+   Widget _buildHistoryContents(BuildContext context) {
+    return StreamBuilder<List<CampaignModel>>(
+      stream: widget.database.campaignHistoryStreamInfo(widget.restaurant),
+      builder: (context, snapshot) {
+        return ListItemBuilder<CampaignModel>(
+            snapshot: snapshot,
+            itemBuilder: (context, campaign) => RestaurantHistoryCampaignList(
+                  campaign: campaign,
+                  database: widget.database,
+                ));
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    getFollowersLength();
+    checkFollowing();
     return Scaffold(
       appBar: AppBar(
         title: Text('Restaurant Details'),
@@ -101,7 +151,7 @@ class _RestaurantDetailsPage extends State<RestaurantDetailsPage> {
                       child: Align(
                         alignment: Alignment.center,
                         child: Text(
-                          ' Followers: 223 ',
+                          ' Followers: $followers ',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
@@ -110,28 +160,47 @@ class _RestaurantDetailsPage extends State<RestaurantDetailsPage> {
                       ),
                     ),
                     SizedBox(
-                      height: 45,
-                      child: RaisedButton(
-                        color: Colors.blue,
-                        onPressed: addFollowers,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            Icon(
-                              Icons.thumb_up,
-                              color: Colors.white,
-                            ),
-                            Text(
-                              '  Follow',
-                              style: TextStyle(
-                                color: Colors.white,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                        height: 45,
+                        child: isFollowing
+                            ? RaisedButton(
+                                onPressed: () => null,
+                                color: Colors.green,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    Icon(
+                                      Icons.check_circle,
+                                      color: Colors.white,
+                                    ),
+                                    Text(
+                                      'Following',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                    )
+                                  ],
+                                ))
+                            : RaisedButton(
+                                color: Colors.blue,
+                                onPressed: addFollowers,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    Icon(
+                                      Icons.thumb_up,
+                                      color: Colors.white,
+                                    ),
+                                    Text(
+                                      '  Follow',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )),
                   ],
                 ),
                 SizedBox(
@@ -146,7 +215,13 @@ class _RestaurantDetailsPage extends State<RestaurantDetailsPage> {
                     alignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
                       FlatButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          setState(() {
+                            info = true;
+                            active = false;
+                            old = false;
+                          });
+                        },
                         child: Column(
                           children: <Widget>[
                             Icon(
@@ -163,7 +238,13 @@ class _RestaurantDetailsPage extends State<RestaurantDetailsPage> {
                         ),
                       ),
                       FlatButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          setState(() {
+                            info = false;
+                            active = true;
+                            old = false;
+                          });
+                        },
                         child: Column(
                           children: <Widget>[
                             Icon(
@@ -181,7 +262,13 @@ class _RestaurantDetailsPage extends State<RestaurantDetailsPage> {
                         ),
                       ),
                       FlatButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          setState(() {
+                            info = false;
+                            active = false;
+                            old = true;
+                          });
+                        },
                         child: Column(
                           children: <Widget>[
                             Icon(
@@ -220,34 +307,46 @@ class _RestaurantDetailsPage extends State<RestaurantDetailsPage> {
                 SizedBox(
                   height: 25,
                 ),
-                Text(
-                  '${widget.restaurant.restaurantName}',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.green[300],
-                  ),
-                ),
-                Container(
-                  alignment: Alignment.center,
-                  margin: EdgeInsets.all(30),
-                  //height: 150,
-                  width: 250,
-                  child: Row(
-                    children: <Widget>[
-                      Flexible(
-                        child: new Text(
-                          "${widget.restaurant.restaurantAddress}",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 18,
+                info
+                    ? Column(
+                        children: [
+                          Text(
+                            '${widget.restaurant.restaurantName}',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.green[300],
+                            ),
                           ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                          Container(
+                            alignment: Alignment.center,
+                            margin: EdgeInsets.all(30),
+                            //height: 150,
+                            width: 250,
+                            child: Row(
+                              children: <Widget>[
+                                Flexible(
+                                  child: new Text(
+                                    "${widget.restaurant.restaurantAddress}",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      )
+                    : Container(),
+                    active ?
+                    _buildActiveContents(context):
+                    Container(),
+                    old ?
+                    _buildHistoryContents(context):
+                    Container(),
               ],
             ),
           ],
