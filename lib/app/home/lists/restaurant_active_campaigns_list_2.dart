@@ -78,8 +78,8 @@ class _RestaurantCampaignList extends State<RestaurantCampaignList> {
   Widget build(BuildContext context) {
     print(widget.campaign[0].imageUrl);
     return Container(
-      height: MediaQuery.of(context).size.height * 0.8,
-      width: MediaQuery.of(context).size.width * 0.9,
+      height: MediaQuery.of(context).size.height * 0.9,
+      width: MediaQuery.of(context).size.width * 0.99,
       child: Column(
         children: <Widget>[
           Flexible(

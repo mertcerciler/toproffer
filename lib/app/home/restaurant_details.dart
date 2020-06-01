@@ -57,7 +57,6 @@ class _RestaurantDetailsPage extends State<RestaurantDetailsPage> {
     setState(() {
       followers = length;
     });
-    
     print(length);
   }
 
@@ -333,7 +332,7 @@ class _RestaurantDetailsPage extends State<RestaurantDetailsPage> {
                             alignment: Alignment.center,
                             margin: EdgeInsets.all(30),
                             //height: 150,
-                            width: 250,
+                            width: MediaQuery.of(context).size.width * 0.99,
                             child: Row(
                               children: <Widget>[
                                 Flexible(
