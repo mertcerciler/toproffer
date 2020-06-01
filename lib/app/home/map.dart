@@ -4,6 +4,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:login/app/home/models/restaurant_model.dart';
 import 'package:login/app/home/models/shops_model.dart';
 import 'package:location/location.dart';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'package:permission/permission.dart' as per;
 import 'dart:async';
 
 import 'package:login/app/services/database.dart';
@@ -18,6 +20,18 @@ class MapPage extends StatefulWidget {
   _MapPage createState() => _MapPage();
 }
 
+// this is the key object - the PolylinePoints
+// which generates every polyline between start and finish
+PolylinePoints polylinePoints = PolylinePoints();
+String googleAPiKey = "AIzaSyBDZPq6C95D8PJ9jQqORGMnWOCp_WXSmaY";
+
+//double _originLatitude = 39.909115, _originLongitude = 32.861881;
+var _destLatitude = 39.8746, _destLongitude = 32.7476;
+//Map<MarkerId, Marker> markers = {};
+Map<PolylineId, Polyline> polylines = {};
+// this will hold each polyline coordinate as Lat and Lng pairs
+List<LatLng> polylineCoordinates = [];
+
 class _MapPage extends State<MapPage> {
   int sacounter = 0;
   bool _serviceEnabled;
@@ -25,6 +39,8 @@ class _MapPage extends State<MapPage> {
 
   Location _location = Location();
   var currentLocation = LocationData;
+  var cords = LocationData;
+
   final Location location = Location();
   Map<String, double> userLocation;
   GoogleMapController _controller;
@@ -66,7 +82,55 @@ class _MapPage extends State<MapPage> {
     super.initState();
     _pageController = PageController(initialPage: 1, viewportFraction: 0.8)
       ..addListener(_onScroll);
+
+    // origin marker
+    //_addMarker(LatLng(lati, longi), "origin", BitmapDescriptor.defaultMarker);
+
+    /// destination marker
+    //_addMarker(LatLng(_destLatitude, _destLongitude), "destination", BitmapDescriptor.defaultMarkerWithHue(90));
+    _getPolyline();
   }
+
+  _addPolyLine() {
+    PolylineId id = PolylineId("poly");
+    Polyline polyline = Polyline(
+        polylineId: id, color: Colors.blue, points: polylineCoordinates);
+    polylines[id] = polyline;
+    setState(() {});
+  }
+
+  _getPolyline() async {
+    _getLocation();
+    PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
+        "AIzaSyBDZPq6C95D8PJ9jQqORGMnWOCp_WXSmaY",
+        PointLatLng(lati, longi),
+        //PointLatLng(_destLatitude, _destLongitude),
+        PointLatLng(37.4219983, -122.084),
+        //PointLatLng(39.8746, 32.7476),
+        travelMode: TravelMode.driving,
+        //wayPoints: [PolylineWayPoint(location: currentLocation)]);
+        wayPoints: [PolylineWayPoint(location: "TunalÄ± Hilmi")]);
+    print('----------------------_destLatitude:${_destLatitude}');
+    print('----------------------_destLongitude:${_destLongitude}');
+    print('----------------------lati:${lati}');
+    print('----------------------longi:${longi}');
+    log(sacounter.toString());
+    if (result.points.isNotEmpty) {
+      result.points.forEach((PointLatLng point) {
+        polylineCoordinates.add(LatLng(point.latitude, point.longitude));
+      });
+    }
+    _addPolyLine();
+  }
+
+/*
+  _addMarker(LatLng position, String id, BitmapDescriptor descriptor) {
+    MarkerId markerId = MarkerId(id);
+    Marker marker =
+        Marker(markerId: markerId, icon: descriptor, position: position);
+    markers[markerId] = marker;
+  }
+  */
 
   var lati = 39.9334;
   var longi = 32.8597;
@@ -98,7 +162,6 @@ class _MapPage extends State<MapPage> {
     return StreamBuilder<List<CampaignModel>>(
         stream: widget.database.campaignStreamMap(id),
         builder: (context, snapshot) {
-          print('length is ${snapshot.data.length}');
           return Positioned(
             bottom: 20.0,
             child: Container(
@@ -133,6 +196,8 @@ class _MapPage extends State<MapPage> {
       cord.forEach((element) {
         if (element['lat'] != null) {
           var cords = LatLng(element['lat'], element['long']);
+          _destLatitude = cords.latitude;
+          _destLongitude = cords.latitude;
           print('onmapcreated');
           allMarkers.add(Marker(
               markerId: MarkerId(element['address']),
@@ -161,7 +226,8 @@ class _MapPage extends State<MapPage> {
     }
   }
 
-  _shopList(List<CampaignModel> campaigns, index) {
+  
+_shopList(List<CampaignModel> campaigns, index) {
     return AnimatedBuilder(
       animation: _pageController,
       builder: (BuildContext context, Widget widget) {
@@ -265,45 +331,52 @@ class _MapPage extends State<MapPage> {
     );
   }
 
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text('TOPROFFER'),
-          centerTitle: true,
-        ),
-        body: Stack(
-          children: <Widget>[
-            Container(
-              height: MediaQuery.of(context).size.height - 50.0,
-              width: MediaQuery.of(context).size.width,
-              child: GoogleMap(
-                myLocationEnabled: true,
-                compassEnabled: true,
-                initialCameraPosition:
-                    CameraPosition(target: LatLng(lati, longi), zoom: 17),
-                mapType: MapType.terrain,
-                onMapCreated: _onMapCreated,
-                markers: Set.from(allMarkers),
+    return SafeArea(
+      child: Scaffold(
+          appBar: AppBar(
+            title: Text('TOPROFFER'),
+            centerTitle: true,
+          ),
+          body: Stack(
+            children: <Widget>[
+              Container(
+                height: MediaQuery.of(context).size.height - 50.0,
+                width: MediaQuery.of(context).size.width,
+                child: GoogleMap(
+                  myLocationEnabled: true,
+                  compassEnabled: true,
+                  initialCameraPosition:
+                      CameraPosition(target: LatLng(lati, longi), zoom: 17),
+                  mapType: MapType.terrain,
+                  tiltGesturesEnabled: true,
+                  scrollGesturesEnabled: true,
+                  zoomGesturesEnabled: true,
+                  onMapCreated: _onMapCreated,
+                  markers: Set.from(allMarkers),
+                  polylines: Set<Polyline>.of(polylines.values),
+                ),
               ),
-            ),
-            check ? _displayCampaigns(context, id) : Container()
-            // Positioned(
-            //   bottom: 20.0,
-            //   child: Container(
-            //     height: 200.0,
-            //     width: MediaQuery.of(context).size.width,
-            //     child: PageView.builder(
-            //       controller: _pageController,
-            //       itemCount: shops.length,
-            //       itemBuilder: (BuildContext context, int index) {
-            //         return _shopList(index);
-            //       },
-            //     ),
-            //   ),
-            // )
-          ],
-        ));
+              check ? _displayCampaigns(context, id) : Container()
+              // Positioned(
+              //   bottom: 20.0,
+              //   child: Container(
+              //     height: 200.0,
+              //     width: MediaQuery.of(context).size.width,
+              //     child: PageView.builder(
+              //       controller: _pageController,
+              //       itemCount: shops.length,
+              //       itemBuilder: (BuildContext context, int index) {
+              //         return _shopList(index);
+              //       },
+              //     ),
+              //   ),
+              // )
+            ],
+          )),
+    );
   }
 
   void mapCreated(controller) {

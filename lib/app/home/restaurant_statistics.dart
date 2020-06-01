@@ -426,7 +426,7 @@ class _RestaurantStatistics extends State<RestaurantStatistics> {
             icon: Icon(
               Icons.format_list_bulleted,
             ),
-            title: Text('My Campaigns'),
+            title: Text('Campaigns'),
           ),
           BottomNavigationBarItem(
             icon: Icon(

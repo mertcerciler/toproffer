@@ -218,7 +218,7 @@ class _RestaurantsActiveCampaigns extends State<RestaurantsActiveCampaigns> {
             icon: Icon(
               Icons.format_list_bulleted,
             ),
-            title: Text('My Campaigns'),
+            title: Text('Campaigns'),
           ),
           BottomNavigationBarItem(
             icon: Icon(

@@ -206,6 +206,7 @@ class _SignUpRestaurantPageState extends State<SignUpRestaurantPage> {
       
       StorageUploadTask uploadTask = firebaseStorageRef.putFile(_image);
       var url = await firebaseStorageRef.getDownloadURL();
+      print(url);
       widget.bloc.updateImageUrl(url);
       StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
     }
@@ -214,7 +215,6 @@ class _SignUpRestaurantPageState extends State<SignUpRestaurantPage> {
       children: <Widget>[
         Column(
           children: <Widget>[
-            
             Container(
               child: Stack(
                 children: <Widget>[
@@ -334,6 +334,7 @@ class _SignUpRestaurantPageState extends State<SignUpRestaurantPage> {
       ],
     );
   }
+
    Future getImage() async {
       var image = await ImagePicker.pickImage(source: ImageSource.gallery);
       setState(() {

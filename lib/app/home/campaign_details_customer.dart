@@ -20,10 +20,86 @@ class CampaignDetailsCustomerPage extends StatefulWidget {
 class _CampaignDetailsCustomerPage extends State<CampaignDetailsCustomerPage> {
   TextEditingController codeInputController;
   bool code = false;
+  bool checkTime = false;
+  DateTime now = DateTime.now();
 
   @override
   void initState() {
     codeInputController = TextEditingController();
+    time();
+  }
+
+  void time() {
+    var currentDay = now.day;
+    String curDay;
+    if (currentDay == 1) {
+      curDay = "Mon";
+    }
+    if (currentDay == 2) {
+      curDay = "Tue";
+    }
+    if (currentDay == 3) {
+      curDay = "Wed";
+    }
+    if (currentDay == 4) {
+      curDay = "Thu";
+    }
+    if (currentDay == 5) {
+      curDay = "Fri";
+    }
+    if (currentDay == 6) {
+      curDay = "Sat";
+    }
+    if (currentDay == 7) {
+      curDay = "Sun";
+    }
+    var campaignStartingHour =
+        int.parse(widget.campaign.startingHour.substring(10, 12));
+    var currentHour = now.hour;
+    var campaignEndingHour =
+        int.parse(widget.campaign.endingHour.substring(10, 12));
+    var campaignStartingMinutes =
+        int.parse(widget.campaign.startingHour.substring(13, 15));
+    var currentMinutes = now.minute;
+    var campaignEndingMinutes =
+        int.parse(widget.campaign.endingHour.substring(13, 15));
+    if (widget.campaign.campaignDays.contains(curDay)) {
+      if (currentHour > campaignStartingHour &&
+          currentHour < campaignEndingHour) {
+        setState(() {
+          checkTime = true;
+        });
+      } else if (currentHour == campaignStartingHour) {
+        if (currentMinutes > campaignStartingMinutes) {
+          setState(() {
+            checkTime = true;
+          });
+        } else {
+          setState(() {
+            checkTime = false;
+          });
+        }
+      } else if (currentHour == campaignEndingHour) {
+        if (currentMinutes < campaignEndingMinutes) {
+          setState(() {
+            checkTime = true;
+          });
+        } else {
+          setState(() {
+            checkTime = false;
+          });
+        }
+      } else {
+        setState(() {
+          checkTime = false;
+        });
+      }
+    }
+    else{
+      setState(() {
+        checkTime = false;
+      });
+    }
   }
 
   Future<void> submitCode() async {
@@ -192,9 +268,7 @@ class _CampaignDetailsCustomerPage extends State<CampaignDetailsCustomerPage> {
           Container(
             height: 150,
             width: 150,
-            child: Image(
-              image: NetworkImage("${widget.campaign.imageUrl}")
-            ),
+            child: Image(image: NetworkImage("${widget.campaign.imageUrl}")),
           ),
           SizedBox(
             height: 15,
@@ -322,30 +396,50 @@ class _CampaignDetailsCustomerPage extends State<CampaignDetailsCustomerPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                OutlineButton(
-                  borderSide: BorderSide(
-                    color: Colors.blue[200],
-                    width: 3.0,
-                    style: BorderStyle.solid,
-                  ),
-                  color: Colors.blue,
-                  child: new Text(
-                    "USE CODE",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.blue,
-                    ),
-                  ),
-                  onPressed: () => changeCode(),
-                  shape: new RoundedRectangleBorder(
-                    side: BorderSide(
-                      color: Colors.blue,
-                      style: BorderStyle.solid,
-                    ),
-                    borderRadius: new BorderRadius.circular(20.0),
-                  ),
-                ),
+                checkTime
+                    ? OutlineButton(
+                        borderSide: BorderSide(
+                          color: Colors.blue[200],
+                          width: 3.0,
+                          style: BorderStyle.solid,
+                        ),
+                        color: Colors.blue,
+                        child: new Text(
+                          "USE CODE",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.blue,
+                          ),
+                        ),
+                        onPressed: () => changeCode(),
+                        shape: new RoundedRectangleBorder(
+                          side: BorderSide(
+                            color: Colors.blue,
+                            style: BorderStyle.solid,
+                          ),
+                          borderRadius: new BorderRadius.circular(20.0),
+                        ),
+                      )
+                    : FlatButton(
+                        disabledColor: Colors.red,
+                        child: new Text(
+                          "Campaign Time Invalid",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        onPressed: null,
+                        shape: new RoundedRectangleBorder(
+                          side: BorderSide(
+                            color: Colors.white,
+                            style: BorderStyle.solid,
+                          ),
+                          borderRadius: new BorderRadius.circular(20.0),
+                        ),
+                    )
               ],
             ),
           ),
