@@ -155,6 +155,11 @@ class _CampaignCreatorPage extends State<CampaignCreatorPage> {
     return restaurantName['restaurant_address'];
   }
 
+  Future<dynamic> getRestaurantUrl() async {
+    var restaurantUrl = await widget.database.getRestaurantNameStream();
+    return restaurantUrl['restaurantUrl'];
+  }
+
   String createRandomInteger() {
     var rng = new Random();
     int rand =  rng.nextInt(99999);
@@ -170,6 +175,7 @@ class _CampaignCreatorPage extends State<CampaignCreatorPage> {
 
     String restaurantName = await getRestaurantName();
     String restaurantAddress = await getRestaurantAddress();
+    var imageUrl = await getRestaurantUrl();
 
     String code = createRandomInteger();
     print(dropdownValue);
@@ -206,6 +212,7 @@ class _CampaignCreatorPage extends State<CampaignCreatorPage> {
         startingHour: startingHour.toString(),
         endingHour: endingHour.toString(),
         code: code,
+        imageUrl: imageUrl,
       );
       try {
         await widget.database.createCampaign(campaign);
@@ -229,6 +236,7 @@ class _CampaignCreatorPage extends State<CampaignCreatorPage> {
         campaignFinished: campaignFinished,
         campaignStarted: now,
         code: code,
+        imageUrl: imageUrl
       );
       try {
         await widget.database.createCampaign(campaign);

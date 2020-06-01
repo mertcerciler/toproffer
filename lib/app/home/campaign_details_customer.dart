@@ -193,9 +193,7 @@ class _CampaignDetailsCustomerPage extends State<CampaignDetailsCustomerPage> {
             height: 150,
             width: 150,
             child: Image(
-              image: AssetImage(
-                'assets/federal3.jpg',
-              ),
+              image: NetworkImage("${widget.campaign.imageUrl}")
             ),
           ),
           SizedBox(

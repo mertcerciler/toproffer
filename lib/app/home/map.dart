@@ -213,8 +213,7 @@ class _MapPage extends State<MapPage> {
                                       bottomLeft: Radius.circular(10.0),
                                       topLeft: Radius.circular(10.0)),
                                   image: DecorationImage(
-                                      image: ExactAssetImage(
-                                          'assets/federal3.jpg'),
+                                      image: NetworkImage("${campaigns[index].imageUrl}"),
                                       fit: BoxFit.cover))),
                           SizedBox(width: 5.0),
                           Column(

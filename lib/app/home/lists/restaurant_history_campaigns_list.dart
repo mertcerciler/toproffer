@@ -39,8 +39,7 @@ class _RestaurantHistoryCampaignList  extends State<RestaurantHistoryCampaignLis
                             child: Row(
                               children: <Widget>[
                                 CircleAvatar(
-                                  backgroundImage: ExactAssetImage(
-                                      'assets/federal3.jpg'),
+                                  backgroundImage: NetworkImage("${widget.campaign[index].imageUrl}"),
                                   //minRadius: 30,
                                   //maxRadius: 70,
                                   backgroundColor: Colors.blue[300],
@@ -174,8 +173,7 @@ class _RestaurantHistoryCampaignList  extends State<RestaurantHistoryCampaignLis
                             child: Row(
                               children: <Widget>[
                                 CircleAvatar(
-                                  backgroundImage: ExactAssetImage(
-                                      'assets/federal3.jpg'),
+                                  backgroundImage: NetworkImage("${widget.campaign[index].imageUrl}"),
                                   //minRadius: 30,
                                   //maxRadius: 70,
                                   backgroundColor: Colors.blue[300],

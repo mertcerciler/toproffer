@@ -18,6 +18,7 @@ class CampaignModel {
     this.campaignStarted,
     this.campaignFinished,
     this.code,
+    this.imageUrl,
   });
   final String id;
   final String title;
@@ -35,6 +36,7 @@ class CampaignModel {
   final DateTime campaignStarted;
   final DateTime releaseDate;
   String code;
+  var imageUrl;
 
   
   factory CampaignModel.fromMap(Map<String, dynamic> data, String campaignId) {
@@ -54,6 +56,7 @@ class CampaignModel {
       final String campaignCategory1 = data['campaign_category_1'];
       final String campaignCategory2 = data['campaign_category_2'];
       final String code = data['code'];
+      var imageUrl = data['imageUrl'];
       return CampaignModel(
         id: id,
         title: title,
@@ -67,6 +70,7 @@ class CampaignModel {
         campaignCategory1: campaignCategory1,
         campaignCategory2: campaignCategory2,
         code: code,
+        imageUrl: imageUrl,
       );
     }
     else {
@@ -84,6 +88,7 @@ class CampaignModel {
       final String campaignCategory1 = data['campaign_category_1'];
       final String campaignCategory2 = data['campaign_category_2'];
       final String code = data['code'];
+      var imageUrl = data['imageUrl'];
       return CampaignModel(
         id: id,
         title: title,
@@ -99,6 +104,7 @@ class CampaignModel {
         campaignCategory1: campaignCategory1,
         campaignCategory2: campaignCategory2,
         code: code,
+        imageUrl: imageUrl,
       );
     }
   }
@@ -120,6 +126,7 @@ class CampaignModel {
         'starting_hour': startingHour,
         'ending_hour': endingHour,
         'code': code,
+        'imageUrl': imageUrl,
       };
     }
     else {
@@ -136,6 +143,7 @@ class CampaignModel {
         'campaign_started' : campaignStarted,
         'campaign_finished' : campaignFinished,
         'code': code,
+        'imageUrl': imageUrl,
       };
     }
   }

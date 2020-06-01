@@ -1,3 +1,4 @@
+import 'dart:io';
 class RestaurantModel {
   RestaurantModel({ 
     this.id,
@@ -9,6 +10,8 @@ class RestaurantModel {
     this.userType, 
     this.longitude,
     this.latitude,
+    this.image,
+    this.imageUrl,
   });
   final String id;
   final String username;
@@ -19,6 +22,9 @@ class RestaurantModel {
   final String restaurantAddress;
   final double longitude;
   final double latitude;
+  final File image;
+  var imageUrl;
+
   DateTime now = DateTime.now();
 
   factory RestaurantModel.fromMap(Map<String, dynamic> data, String userId) {
@@ -34,6 +40,7 @@ class RestaurantModel {
     final String userType = data['user type'];
     final double longitude = data['longitude'];
     final double latitude = data['latitude'];
+    var imageUrl = data['imageUrl'];
     return RestaurantModel(
       id: userId,
       username: username,
@@ -43,7 +50,8 @@ class RestaurantModel {
       email: email,
       userType: userType,
       longitude: longitude,
-      latitude: latitude
+      latitude: latitude,
+      imageUrl: imageUrl,
     );
   }
 
@@ -58,6 +66,7 @@ class RestaurantModel {
       'longitude': longitude,
       'user type': userType,
       'email': email,
+      'imageUrl': imageUrl,
     };
   }
 
@@ -70,6 +79,8 @@ class RestaurantModel {
     String restaurantAddress,
     double latitude,
     double longitude,
+    File image,
+    var imageUrl,
   }) {
     return RestaurantModel(
       restaurantName: restaurantName ?? this.restaurantName,
@@ -79,7 +90,9 @@ class RestaurantModel {
       userType: userType ?? this.userType,
       restaurantAddress: restaurantAddress ?? this.restaurantAddress,
       latitude: latitude ?? this.latitude,
-      longitude: longitude ?? this.longitude
+      longitude: longitude ?? this.longitude,
+      image: image ?? this.image,
+      imageUrl: imageUrl  ?? this.imageUrl
     ); 
   }
 }

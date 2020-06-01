@@ -25,8 +25,8 @@ class _RestaurantDetailsPage extends State<RestaurantDetailsPage> {
   int _selectedIndex = 2;
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-  static bool isFollowing = false;
-  static int followers = 0;
+  bool isFollowing = false;
+  int followers = 0;
   bool info = true;
   bool active = false;
   bool old = false;
@@ -35,16 +35,30 @@ class _RestaurantDetailsPage extends State<RestaurantDetailsPage> {
       _selectedIndex = index;
     });
   }
+  @override
+  void initState() {
+    
+    getFollowersLength();
+    checkFollowing();
+      
+  }
 
   Future<void> checkFollowing() async {
     var followersList = await widget.database.checkFollowers(widget.restaurant);
-    isFollowing = followersList;
-    print(isFollowing);
+      setState(() {
+        isFollowing =followersList;
+      });
+    print(followersList);
   }
 
-  Future<int> getFollowersLength() async {
+  Future<void> getFollowersLength() async {
+    
     var length = await widget.database.followersLength(widget.restaurant);
-    followers = length;
+    setState(() {
+      followers = length;
+    });
+    
+    print(length);
   }
 
   Future<UserModel> getUserModel() async {
@@ -87,8 +101,6 @@ class _RestaurantDetailsPage extends State<RestaurantDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    getFollowersLength();
-    checkFollowing();
     return Scaffold(
       appBar: AppBar(
         title: Text('Restaurant Details'),
@@ -104,9 +116,7 @@ class _RestaurantDetailsPage extends State<RestaurantDetailsPage> {
                 ),
                 CircleAvatar(
                   radius: 75,
-                  backgroundImage: AssetImage(
-                    'assets/gagamanjero.png',
-                  ),
+                  backgroundImage: NetworkImage("${widget.restaurant.imageUrl}")
                 ),
                 SizedBox(
                   height: 15,

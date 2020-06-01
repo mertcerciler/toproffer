@@ -199,7 +199,16 @@ class _SignUpRestaurantPageState extends State<SignUpRestaurantPage> {
       child: Text('Find address'),
     );
   }
-
+  Future uploadPic(BuildContext context) async {
+      String fileName = basename(_image.path);
+      StorageReference firebaseStorageRef =
+          FirebaseStorage.instance.ref().child(fileName);
+      
+      StorageUploadTask uploadTask = firebaseStorageRef.putFile(_image);
+      var url = await firebaseStorageRef.getDownloadURL();
+      widget.bloc.updateImageUrl(url);
+      StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
+    }
   Widget _buildChildren(BuildContext context) {
     return ListView(
       children: <Widget>[
@@ -288,8 +297,8 @@ class _SignUpRestaurantPageState extends State<SignUpRestaurantPage> {
                           elevation: 7.0,
                           child: FormSubmitButton(
                             onPressed: () {
-                                widget.bloc.createRestaurant(context);
                                 uploadPic(context);
+                                widget.bloc.createRestaurant(context);
                             },
                             text: 'Sign up',
                           ),
@@ -327,23 +336,12 @@ class _SignUpRestaurantPageState extends State<SignUpRestaurantPage> {
   }
    Future getImage() async {
       var image = await ImagePicker.pickImage(source: ImageSource.gallery);
-
       setState(() {
         _image = image;
-        print('Image Path $_image');
       });
     }
 
-    Future uploadPic(BuildContext context) async {
-      String fileName = basename(_image.path);
-      StorageReference firebaseStorageRef =
-          FirebaseStorage.instance.ref().child(fileName);
-      StorageUploadTask uploadTask = firebaseStorageRef.putFile(_image);
-      StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
-      setState(() {
-        print("Profile Picture uploaded");
-      });
-    }
+    
   @override
   Widget build(BuildContext context) {
 

@@ -5,6 +5,10 @@ import 'package:login/app/home/models/restaurant_model.dart';
 import 'package:login/app/home/models/user_model.dart';
 import 'package:login/app/services/auth.dart';
 import 'package:login/app/services/database.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:path/path.dart';
+import 'dart:io';
+
 
 class SignUpRestaurantBloc {
   SignUpRestaurantBloc({@required this.database, @required this.auth});
@@ -18,7 +22,7 @@ class SignUpRestaurantBloc {
   void dispose(){
     _modelController.close();
   }
-
+  
   Future<void> createRestaurant(BuildContext context) async {
     User user;
     DateTime now = DateTime.now();
@@ -34,10 +38,12 @@ class SignUpRestaurantBloc {
         restaurantAddress: _model.restaurantAddress,
         latitude: _model.latitude,
         longitude: _model.longitude,
+        imageUrl: _model.imageUrl,
       );
       await database.createUserType(user.uid, 'restaurants');
       await database.createRestaurant(user.uid, restaurant);
       await database.createAllRestaurant(user.uid, restaurant);
+      
     } catch(e) {
       rethrow;
     }
@@ -51,6 +57,8 @@ class SignUpRestaurantBloc {
   void updateLongitude(double longitude) => updateWith(longitude: longitude);
   void updateRestaurantName(String restaurantName) => updateWith(restaurantName: restaurantName);
   void updateEmail(String email) => updateWith(email: email);
+  void updateImage(File image) => updateWith(image: image);
+  void updateImageUrl(var imageUrl) => updateWith(imageUrl: imageUrl);
 
   void updateWith({
     String username,
@@ -63,6 +71,8 @@ class SignUpRestaurantBloc {
     String userType,
     double latitude,
     double longitude,
+    File image,
+    var imageUrl,
   }) {
     _model = _model.copyWith(
       email: email,
@@ -73,6 +83,8 @@ class SignUpRestaurantBloc {
       longitude: longitude,
       restaurantAddress: restaurantAddress,
       userType: userType,
+      image: image,
+      imageUrl: imageUrl,
     );
     _modelController.add(_model); 
   } 

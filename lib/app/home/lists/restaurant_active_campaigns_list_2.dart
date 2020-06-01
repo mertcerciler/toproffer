@@ -76,6 +76,7 @@ class _RestaurantCampaignList extends State<RestaurantCampaignList> {
 
   @override
   Widget build(BuildContext context) {
+    print(widget.campaign[0].imageUrl);
     return Container(
       height: MediaQuery.of(context).size.height * 0.8,
       width: MediaQuery.of(context).size.width * 0.9,
@@ -95,8 +96,7 @@ class _RestaurantCampaignList extends State<RestaurantCampaignList> {
                                 child: Row(
                                   children: <Widget>[
                                     CircleAvatar(
-                                      backgroundImage: ExactAssetImage(
-                                          'assets/federal3.jpg'),
+                                      backgroundImage:  NetworkImage('${widget.campaign[index].imageUrl}'),
                                       //minRadius: 30,
                                       //maxRadius: 70,
                                       backgroundColor: Colors.blue[300],
@@ -242,8 +242,8 @@ class _RestaurantCampaignList extends State<RestaurantCampaignList> {
                                 child: Row(
                                   children: <Widget>[
                                     CircleAvatar(
-                                      backgroundImage: ExactAssetImage(
-                                          'assets/federal3.jpg'),
+                                      backgroundImage: 
+                                          NetworkImage("${widget.campaign[index].imageUrl}"),
                                       //minRadius: 30,
                                       //maxRadius: 70,
                                       backgroundColor: Colors.blue[300],

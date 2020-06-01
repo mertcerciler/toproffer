@@ -45,8 +45,7 @@ class _RestaurantListItem  extends State<RestaurantListItem > {
                             child: Row(
                               children: <Widget>[
                                 CircleAvatar(
-                                  backgroundImage: ExactAssetImage(
-                                      'assets/federal3.jpg'),
+                                  backgroundImage: NetworkImage('${widget.restaurant[index].imageUrl}'),
                                   //minRadius: 30,
                                   //maxRadius: 70,
                                   backgroundColor: Colors.blue[300],

@@ -92,6 +92,7 @@ class FirestoreDatabase implements Database {
       (snapshot)  =>  { 
         'restaurant_name': snapshot['restaurant_name'],
         'restaurant_address':  snapshot['address'],
+        'restaurantUrl': snapshot['imageUrl'],
       }
     ).toList());
     restaurantName = await map.first;
@@ -115,13 +116,13 @@ class FirestoreDatabase implements Database {
     final snapshots = reference.snapshots();
     final map = snapshots.map((snapshot) => snapshot.documents.map(
       (snapshot) {
-        return snapshot.data['id'];
+        return snapshot.data['id'].toString();
     }).toList());
     var list = await map.first;
     return list.contains(uid);
   }
 
-  Future<int> followersLength(RestaurantModel restaurant)  {
+  Future<int> followersLength(RestaurantModel restaurant) async {
     final path = APIPath.get_restaurant_followers(restaurant.id);
     final reference = Firestore.instance.collection(path);
     final snapshots = reference.snapshots();
@@ -129,7 +130,9 @@ class FirestoreDatabase implements Database {
       (snapshot) {
         return snapshot.data['id'];
     }).toList());
-    return map.length;
+    
+    var list =  await map.first;
+    return list.length;
   }
 
   Future<void> setUserInterests(List<String> interests) async {
@@ -340,7 +343,8 @@ class FirestoreDatabase implements Database {
             campaignCategory1: snapshot.data['campaign_category_1'],
             campaignCategory2: snapshot.data['campaign_category_2'],
             newPrice: snapshot.data['newPrice'],
-            oldPrice: snapshot.data['oldPrice'], 
+            oldPrice: snapshot.data['oldPrice'],
+            imageUrl: snapshot.data['imageUrl'], 
             restaurantAddress: snapshot.data['restaurant_address'],
             campaignFinished: snapshot.data['campaign_finished'].toDate(),
             campaignStarted: snapshot.data['campaign_started'].toDate(),
@@ -355,6 +359,7 @@ class FirestoreDatabase implements Database {
             campaignCategory2: snapshot.data['campaign_category_2'],
             newPrice: snapshot.data['newPrice'],
             oldPrice: snapshot.data['oldPrice'], 
+            imageUrl: snapshot.data['imageUrl'],
             campaignDays: snapshot.data['campaign_days'],
             restaurantAddress: snapshot.data['restaurant_address'],
             endingHour: snapshot.data['ending_hour'],
@@ -380,6 +385,7 @@ class FirestoreDatabase implements Database {
             campaignCategory2: snapshot.data['campaign_category_2'],
             newPrice: snapshot.data['newPrice'],
             oldPrice: snapshot.data['oldPrice'], 
+            imageUrl: snapshot.data['imageUrl'],
             campaignFinished: snapshot.data['campaign_finished'].toDate(),
             campaignStarted: snapshot.data['campaign_started'].toDate(),
             campaignType: snapshot.data['campaign_type'], 
@@ -393,6 +399,7 @@ class FirestoreDatabase implements Database {
             campaignCategory2: snapshot.data['campaign_category_2'],
             newPrice: snapshot.data['newPrice'],
             oldPrice: snapshot.data['oldPrice'], 
+            imageUrl: snapshot.data['imageUrl'],
             campaignDays: snapshot.data['campaign_days'],
             endingHour: snapshot.data['ending_hour'],
             startingHour: snapshot.data['starting_hour'],
@@ -418,6 +425,7 @@ class FirestoreDatabase implements Database {
             campaignCategory2: snapshot.data['campaign_category_2'],
             newPrice: snapshot.data['newPrice'],
             oldPrice: snapshot.data['oldPrice'], 
+            imageUrl: snapshot.data['imageUrl'],
             campaignFinished: snapshot.data['campaign_finished'].toDate(),
             campaignStarted: snapshot.data['campaign_started'].toDate(),
             campaignType: snapshot.data['campaign_type'], 
@@ -430,7 +438,8 @@ class FirestoreDatabase implements Database {
             campaignCategory1: snapshot.data['campaign_category_1'],
             campaignCategory2: snapshot.data['campaign_category_2'],
             newPrice: snapshot.data['newPrice'],
-            oldPrice: snapshot.data['oldPrice'], 
+            oldPrice: snapshot.data['oldPrice'],
+            imageUrl: snapshot.data['imageUrl'], 
             campaignDays: snapshot.data['campaign_days'],
             endingHour: snapshot.data['ending_hour'],
             startingHour: snapshot.data['starting_hour'],
@@ -456,6 +465,7 @@ class FirestoreDatabase implements Database {
             campaignCategory2: snapshot.data['campaign_category_2'],
             newPrice: snapshot.data['newPrice'],
             oldPrice: snapshot.data['oldPrice'], 
+            imageUrl: snapshot.data['imageUrl'],
             campaignFinished: snapshot.data['campaign_finished'].toDate(),
             campaignStarted: snapshot.data['campaign_started'].toDate(),
             campaignType: snapshot.data['campaign_type'], 
@@ -469,6 +479,7 @@ class FirestoreDatabase implements Database {
             campaignCategory2: snapshot.data['campaign_category_2'],
             newPrice: snapshot.data['newPrice'],
             oldPrice: snapshot.data['oldPrice'], 
+            imageUrl: snapshot.data['imageUrl'],
             campaignDays: snapshot.data['campaign_days'],
             endingHour: snapshot.data['ending_hour'],
             startingHour: snapshot.data['starting_hour'],
@@ -493,6 +504,7 @@ class FirestoreDatabase implements Database {
             campaignCategory2: snapshot.data['campaign_category_2'],
             newPrice: snapshot.data['newPrice'],
             oldPrice: snapshot.data['oldPrice'], 
+            imageUrl: snapshot.data['imageUrl'],
             campaignType: snapshot.data['campaign_type'], 
           );
         } else {
@@ -503,6 +515,7 @@ class FirestoreDatabase implements Database {
             campaignCategory2: snapshot.data['campaign_category_2'],
             newPrice: snapshot.data['newPrice'],
             oldPrice: snapshot.data['oldPrice'], 
+            imageUrl: snapshot.data['imageUrl'],
             endingHour: snapshot.data['ending_hour'],
             startingHour: snapshot.data['starting_hour'],
             campaignType: snapshot.data['campaign_type'], 
@@ -525,6 +538,7 @@ class FirestoreDatabase implements Database {
             campaignCategory1: snapshot.data['campaign_category_1'],
             campaignCategory2: snapshot.data['campaign_category_2'],
             newPrice: snapshot.data['newPrice'],
+            imageUrl: snapshot.data['imageUrl'],
             oldPrice: snapshot.data['oldPrice'], 
             campaignType: snapshot.data['campaign_type'], 
           );
@@ -535,7 +549,8 @@ class FirestoreDatabase implements Database {
             campaignCategory1: snapshot.data['campaign_category_1'],
             campaignCategory2: snapshot.data['campaign_category_2'],
             newPrice: snapshot.data['newPrice'],
-            oldPrice: snapshot.data['oldPrice'], 
+            oldPrice: snapshot.data['oldPrice'],
+            imageUrl: snapshot.data['imageUrl'], 
             endingHour: snapshot.data['ending_hour'],
             startingHour: snapshot.data['starting_hour'],
             campaignType: snapshot.data['campaign_type'], 
@@ -555,7 +570,8 @@ class FirestoreDatabase implements Database {
             id: snapshot.data['id'],
             restaurantName: snapshot.data['restaurant_name'],
             restaurantAddress: snapshot.data['address'],
-            email: snapshot.data['email'] 
+            email: snapshot.data['email'],
+            imageUrl: snapshot.data['imageUrl'],
           );
       }
     ).toList());
