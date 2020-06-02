@@ -5,7 +5,6 @@ import 'package:login/app/home/models/restaurant_model.dart';
 import 'package:login/app/home/models/shops_model.dart';
 import 'package:location/location.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
-import 'package:permission/permission.dart' as per;
 import 'dart:async';
 
 import 'package:login/app/services/database.dart';
@@ -20,27 +19,23 @@ class MapPage extends StatefulWidget {
   _MapPage createState() => _MapPage();
 }
 
-// this is the key object - the PolylinePoints
-// which generates every polyline between start and finish
-PolylinePoints polylinePoints = PolylinePoints();
-String googleAPiKey = "AIzaSyBDZPq6C95D8PJ9jQqORGMnWOCp_WXSmaY";
-
-//double _originLatitude = 39.909115, _originLongitude = 32.861881;
-var _destLatitude = 39.8746, _destLongitude = 32.7476;
-//Map<MarkerId, Marker> markers = {};
-Map<PolylineId, Polyline> polylines = {};
-// this will hold each polyline coordinate as Lat and Lng pairs
-List<LatLng> polylineCoordinates = [];
-
 class _MapPage extends State<MapPage> {
+  double _destLatitude = 39.8948, _destLongitude = 32.8630;
+  Map<PolylineId, Polyline> polylines = {};
+  // this will hold each polyline coordinate as Lat and Lng pairs
+  List<LatLng> polylineCoordinates = [];
+
+  // this is the key object - the PolylinePoints
+  // which generates every polyline between start and finish
+  PolylinePoints polylinePoints = PolylinePoints();
+  String googleAPiKey = "AIzaSyBDZPq6C95D8PJ9jQqORGMnWOCp_WXSmaY";
+
   int sacounter = 0;
   bool _serviceEnabled;
   PermissionStatus _permissionGranted;
 
   Location _location = Location();
   var currentLocation = LocationData;
-  var cords = LocationData;
-
   final Location location = Location();
   Map<String, double> userLocation;
   GoogleMapController _controller;
@@ -76,6 +71,46 @@ class _MapPage extends State<MapPage> {
     }
   }
 
+  _addPolyLine() {
+    PolylineId id = PolylineId("poly");
+    print('polylineCoordinates is **********************: $polylineCoordinates');
+
+    Polyline polyline = Polyline(
+        polylineId: id, color: Colors.blue, points: polylineCoordinates);
+    polylines[id] = polyline;
+  } 
+
+  _polyline(double lat, double long) async {
+    await _getPolyline(lat, long);
+    _addPolyLine();
+  }
+
+  Future<void> _getPolyline(double lat, double long) async {
+    //_getLocation();
+    LocationData crr = await location.getLocation();
+
+    print('--------------------------------------crr.latitude:${crr.latitude}');
+    print('----------------------------------crr.longitude:${crr.longitude}');
+    print('----------------------------------direction lati:$lat');
+    print('----------------------------------direction long:$long');
+
+    PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
+      "AIzaSyBDZPq6C95D8PJ9jQqORGMnWOCp_WXSmaY",
+      //PointLatLng(crr.latitude, crr.longitude),
+      PointLatLng(crr.latitude, crr.longitude),
+      PointLatLng(lat, long),
+      travelMode: TravelMode.bicycling,
+    );
+    print('result.points.length is ${result.points.isEmpty}');
+    if (result.points.isNotEmpty) {
+      
+      result.points.forEach((PointLatLng point)  {
+        polylineCoordinates.add(LatLng(point.latitude, point.longitude));
+      });
+    }
+    
+  }
+
   @override
   void initState() {
     print('initState');
@@ -83,54 +118,8 @@ class _MapPage extends State<MapPage> {
     _pageController = PageController(initialPage: 1, viewportFraction: 0.8)
       ..addListener(_onScroll);
 
-    // origin marker
-    //_addMarker(LatLng(lati, longi), "origin", BitmapDescriptor.defaultMarker);
-
-    /// destination marker
-    //_addMarker(LatLng(_destLatitude, _destLongitude), "destination", BitmapDescriptor.defaultMarkerWithHue(90));
-    _getPolyline();
+    
   }
-
-  _addPolyLine() {
-    PolylineId id = PolylineId("poly");
-    Polyline polyline = Polyline(
-        polylineId: id, color: Colors.blue, points: polylineCoordinates);
-    polylines[id] = polyline;
-    setState(() {});
-  }
-
-  _getPolyline() async {
-    _getLocation();
-    PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-        "AIzaSyBDZPq6C95D8PJ9jQqORGMnWOCp_WXSmaY",
-        PointLatLng(lati, longi),
-        //PointLatLng(_destLatitude, _destLongitude),
-        PointLatLng(37.4219983, -122.084),
-        //PointLatLng(39.8746, 32.7476),
-        travelMode: TravelMode.driving,
-        //wayPoints: [PolylineWayPoint(location: currentLocation)]);
-        wayPoints: [PolylineWayPoint(location: "TunalÄ± Hilmi")]);
-    print('----------------------_destLatitude:${_destLatitude}');
-    print('----------------------_destLongitude:${_destLongitude}');
-    print('----------------------lati:${lati}');
-    print('----------------------longi:${longi}');
-    log(sacounter.toString());
-    if (result.points.isNotEmpty) {
-      result.points.forEach((PointLatLng point) {
-        polylineCoordinates.add(LatLng(point.latitude, point.longitude));
-      });
-    }
-    _addPolyLine();
-  }
-
-/*
-  _addMarker(LatLng position, String id, BitmapDescriptor descriptor) {
-    MarkerId markerId = MarkerId(id);
-    Marker marker =
-        Marker(markerId: markerId, icon: descriptor, position: position);
-    markers[markerId] = marker;
-  }
-  */
 
   var lati = 39.9334;
   var longi = 32.8597;
@@ -179,14 +168,14 @@ class _MapPage extends State<MapPage> {
         });
   }
 
-  void _changeCheck(String id_1) {
+  void _changeCheck(String id_1, double lat, double long) {
     setState(() {
       check = true;
       id = id_1;
     });
     print('check is $check');
   }
-
+  var cords = LatLng(0,0);
   void _onMapCreated(GoogleMapController _cntrl) async {
     _controller = _cntrl;
     _ifEnabled();
@@ -195,16 +184,15 @@ class _MapPage extends State<MapPage> {
     setState(() {
       cord.forEach((element) {
         if (element['lat'] != null) {
-          var cords = LatLng(element['lat'], element['long']);
-          _destLatitude = cords.latitude;
-          _destLongitude = cords.latitude;
+          cords = LatLng(element['lat'], element['long']);
+         
           print('onmapcreated');
           allMarkers.add(Marker(
               markerId: MarkerId(element['address']),
               draggable: false,
-              onTap: () => _changeCheck(element['id']),
+              onTap: () => _changeCheck(element['id'], element['lat'], element['long']),
               infoWindow: InfoWindow(
-                  title: element['name'], snippet: element['address']),
+                  title: element['name'], snippet: 'Tap this window to draw direction.', onTap: () =>  _polyline(element['lat'], element['long'])),
               position: cords));
         }
       });
@@ -217,6 +205,7 @@ class _MapPage extends State<MapPage> {
         CameraPosition(target: LatLng(sa.latitude, sa.longitude), zoom: 15),
       ),
     );
+    
   }
 
   void _onScroll() {
@@ -226,8 +215,7 @@ class _MapPage extends State<MapPage> {
     }
   }
 
-  
-_shopList(List<CampaignModel> campaigns, index) {
+  _shopList(List<CampaignModel> campaigns, index) {
     return AnimatedBuilder(
       animation: _pageController,
       builder: (BuildContext context, Widget widget) {
@@ -242,6 +230,7 @@ _shopList(List<CampaignModel> campaigns, index) {
             width: Curves.easeInOut.transform(value) * 350.0,
             child: widget,
           ),
+          
         );
       },
       child: InkWell(
@@ -249,6 +238,7 @@ _shopList(List<CampaignModel> campaigns, index) {
             // moveCamera();
           },
           child: Stack(children: [
+            
             Center(
                 child: Container(
                     margin: EdgeInsets.symmetric(
@@ -348,12 +338,12 @@ _shopList(List<CampaignModel> campaigns, index) {
                 child: GoogleMap(
                   myLocationEnabled: true,
                   compassEnabled: true,
-                  initialCameraPosition:
-                      CameraPosition(target: LatLng(lati, longi), zoom: 17),
-                  mapType: MapType.terrain,
                   tiltGesturesEnabled: true,
                   scrollGesturesEnabled: true,
                   zoomGesturesEnabled: true,
+                  initialCameraPosition:
+                      CameraPosition(target: LatLng(lati, longi), zoom: 17),
+                  mapType: MapType.terrain,
                   onMapCreated: _onMapCreated,
                   markers: Set.from(allMarkers),
                   polylines: Set<Polyline>.of(polylines.values),

@@ -199,17 +199,26 @@ class _SignUpRestaurantPageState extends State<SignUpRestaurantPage> {
       child: Text('Find address'),
     );
   }
+
+  Future getImage() async {
+    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    setState(() {
+      _image = image;
+    });
+  }
+
   Future uploadPic(BuildContext context) async {
-      String fileName = basename(_image.path);
-      StorageReference firebaseStorageRef =
-          FirebaseStorage.instance.ref().child(fileName);
-      
-      StorageUploadTask uploadTask = firebaseStorageRef.putFile(_image);
-      var url = await firebaseStorageRef.getDownloadURL();
-      print(url);
-      widget.bloc.updateImageUrl(url);
-      StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
-    }
+    String fileName = basename(_image.path);
+    StorageReference firebaseStorageRef =
+        FirebaseStorage.instance.ref().child(fileName);
+
+    StorageUploadTask uploadTask = firebaseStorageRef.putFile(_image);
+    var url = await firebaseStorageRef.getDownloadURL();
+  
+    widget.bloc.updateImageUrl(url);
+    StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
+  }
+
   Widget _buildChildren(BuildContext context) {
     return ListView(
       children: <Widget>[
@@ -241,28 +250,50 @@ class _SignUpRestaurantPageState extends State<SignUpRestaurantPage> {
                     _buildConfirmPasswordTextField(),
                     _buildEmailTextField(),
                     _buildAddressPrediction(context),
+                    RaisedButton(
+                        onPressed: () => getImage(),
+                        color: Colors.green,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Icon(
+                              Icons.collections,
+                              color: Colors.white,
+                            ),
+                            Text(
+                              'Get a photo',
+                              style: TextStyle(
+                                color: Colors.white,
+                              ),
+                            )
+                          ],
+                        )),
                     Align(
-                    alignment: Alignment.center,
-                    child: CircleAvatar(
-                      radius: 100,
-                      backgroundColor: Color(0xff476cfb),
-                      child: ClipOval(
-                        child: new SizedBox(
-                          width: 180.0,
-                          height: 180.0,
-                          child: (_image!=null)?Image.file(
-                            _image,
-                            fit: BoxFit.fill,
-                          ):Image.network(
-                            "https://images.unsplash.com/photo-1502164980785-f8aa41d53611?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60",
-                            fit: BoxFit.fill,
+                      
+                      child: CircleAvatar(
+                        radius: 100,
+                        backgroundColor: Color(0xff476cfb),
+                        child: ClipOval(
+                          child: new SizedBox(
+                            width: 180.0,
+                            height: 180.0,
+                            child: (_image != null)
+                                ? Image.file(
+                                    _image,
+                                    fit: BoxFit.fill,
+                                  )
+                                : Image.network(
+                                    "https://images.unsplash.com/photo-1502164980785-f8aa41d53611?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60",
+                                    fit: BoxFit.fill,
+                                  ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                    RaisedButton(
-                                onPressed: ()=>  getImage(),
+                    
+                         RaisedButton(
+                                onPressed: ()=>  uploadPic(context),
                                 color: Colors.green,
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
@@ -273,7 +304,7 @@ class _SignUpRestaurantPageState extends State<SignUpRestaurantPage> {
                                       color: Colors.white,
                                     ),
                                     Text(
-                                      'Get a photo',
+                                      'Upload this photo',
                                       style: TextStyle(
                                         color: Colors.white,
                                       ),
@@ -297,8 +328,8 @@ class _SignUpRestaurantPageState extends State<SignUpRestaurantPage> {
                           elevation: 7.0,
                           child: FormSubmitButton(
                             onPressed: () {
-                                uploadPic(context);
-                                widget.bloc.createRestaurant(context);
+                              
+                              widget.bloc.createRestaurant(context);
                             },
                             text: 'Sign up',
                           ),
@@ -335,17 +366,8 @@ class _SignUpRestaurantPageState extends State<SignUpRestaurantPage> {
     );
   }
 
-   Future getImage() async {
-      var image = await ImagePicker.pickImage(source: ImageSource.gallery);
-      setState(() {
-        _image = image;
-      });
-    }
-
-    
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         title: Text("Register Restaurant"),
@@ -359,9 +381,7 @@ class _SignUpRestaurantPageState extends State<SignUpRestaurantPage> {
           ),
         ],
       ),
-      body:  _buildChildren(context),
-          
-      
+      body: _buildChildren(context),
     );
   }
 }

@@ -76,7 +76,6 @@ class _RestaurantCampaignList extends State<RestaurantCampaignList> {
 
   @override
   Widget build(BuildContext context) {
-    print(widget.campaign[0].imageUrl);
     return Container(
       height: MediaQuery.of(context).size.height * 0.83,
       width: MediaQuery.of(context).size.width * 0.99,
@@ -184,12 +183,25 @@ class _RestaurantCampaignList extends State<RestaurantCampaignList> {
                                             Container(
                                               alignment: Alignment.center,
                                               child: Text(
-                                                "Fast Food",
+                                                "${widget.campaign[index].campaignCategory1}",
                                                 style: TextStyle(
                                                   fontSize: 15,
                                                 ),
                                               ),
                                             ),
+                                             widget.campaign[index]
+                                                    .campaignCategory2
+                                                    .contains("Optional")
+                                                ? Container()
+                                                : Container(
+                                                    alignment: Alignment.center,
+                                                    child: Text(
+                                                      "${widget.campaign[index].campaignCategory2}",
+                                                      style: TextStyle(
+                                                        fontSize: 15,
+                                                      ),
+                                                    ),
+                                                  ),
                                             SizedBox(
                                               height: 8,
                                             ),

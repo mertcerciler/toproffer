@@ -20,13 +20,15 @@ class CampaignDetailsCustomerPage extends StatefulWidget {
 class _CampaignDetailsCustomerPage extends State<CampaignDetailsCustomerPage> {
   TextEditingController codeInputController;
   bool code = false;
-  bool checkTime = false;
+  bool checkTime = true;
   DateTime now = DateTime.now();
 
   @override
   void initState() {
     codeInputController = TextEditingController();
-    time();
+    if (widget.campaign.campaignType == "Permenant") {
+      time();
+    }
   }
 
   void time() {
@@ -63,27 +65,33 @@ class _CampaignDetailsCustomerPage extends State<CampaignDetailsCustomerPage> {
     var currentMinutes = now.minute;
     var campaignEndingMinutes =
         int.parse(widget.campaign.endingHour.substring(13, 15));
-    if (widget.campaign.campaignDays.contains(curDay)) {
-      if (currentHour > campaignStartingHour &&
-          currentHour < campaignEndingHour) {
-        setState(() {
-          checkTime = true;
-        });
-      } else if (currentHour == campaignStartingHour) {
-        if (currentMinutes > campaignStartingMinutes) {
+    
+      if (widget.campaign.campaignDays.contains(curDay)) {
+        if (currentHour > campaignStartingHour &&
+            currentHour < campaignEndingHour) {
           setState(() {
             checkTime = true;
           });
-        } else {
-          setState(() {
-            checkTime = false;
-          });
-        }
-      } else if (currentHour == campaignEndingHour) {
-        if (currentMinutes < campaignEndingMinutes) {
-          setState(() {
-            checkTime = true;
-          });
+        } else if (currentHour == campaignStartingHour) {
+          if (currentMinutes > campaignStartingMinutes) {
+            setState(() {
+              checkTime = true;
+            });
+          } else {
+            setState(() {
+              checkTime = false;
+            });
+          }
+        } else if (currentHour == campaignEndingHour) {
+          if (currentMinutes < campaignEndingMinutes) {
+            setState(() {
+              checkTime = true;
+            });
+          } else {
+            setState(() {
+              checkTime = false;
+            });
+          }
         } else {
           setState(() {
             checkTime = false;
@@ -94,12 +102,7 @@ class _CampaignDetailsCustomerPage extends State<CampaignDetailsCustomerPage> {
           checkTime = false;
         });
       }
-    }
-    else{
-      setState(() {
-        checkTime = false;
-      });
-    }
+    
   }
 
   Future<void> submitCode() async {
@@ -147,7 +150,7 @@ class _CampaignDetailsCustomerPage extends State<CampaignDetailsCustomerPage> {
       try {
         var read = await widget.database.getUsedCampaigns(
             now.weekday, widget.campaign.campaignCategory1, campaignHour);
-
+        
         setState(() {
           count1 = int.parse(read);
           count1 += 1;
@@ -156,11 +159,7 @@ class _CampaignDetailsCustomerPage extends State<CampaignDetailsCustomerPage> {
         if (!widget.campaign.campaignCategory2.contains("Optional")) {
           var read = await widget.database.getUsedCampaigns(
               now.weekday, widget.campaign.campaignCategory2, campaignHour);
-
-          setState(() {
-            count2 = 1;
-          });
-
+          print(read);
           setState(() {
             count2 = int.parse(read);
             count2 += 1;
@@ -169,14 +168,16 @@ class _CampaignDetailsCustomerPage extends State<CampaignDetailsCustomerPage> {
       } catch (e) {
         rethrow;
       }
-
+      
       try {
+        print('read');
         await widget.database.addUsedCampaigns({
           'day': now.weekday,
           'campaign_category': widget.campaign.campaignCategory1,
           'hour': campaignHour,
           'count': count1,
         });
+        print('read2');
         if (!widget.campaign.campaignCategory2.contains("Optional")) {
           await widget.database.addUsedCampaigns({
             'day': now.weekday,
@@ -185,6 +186,7 @@ class _CampaignDetailsCustomerPage extends State<CampaignDetailsCustomerPage> {
             'count': count2,
           });
         }
+        print('read3');
         Navigator.of(context).pop();
       } catch (e) {
         rethrow;
@@ -439,7 +441,7 @@ class _CampaignDetailsCustomerPage extends State<CampaignDetailsCustomerPage> {
                           ),
                           borderRadius: new BorderRadius.circular(20.0),
                         ),
-                    )
+                      )
               ],
             ),
           ),
