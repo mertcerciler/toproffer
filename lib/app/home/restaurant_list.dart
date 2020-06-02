@@ -4,6 +4,7 @@ import 'package:login/app/home/campaign_list_page_2.dart';
 import 'package:login/app/home/lists/list_item_builder.dart';
 import 'package:login/app/services/auth.dart';
 import 'package:login/app/services/database.dart';
+import 'package:login/app/sign_in/signin_page.dart';
 import 'package:login/common_widgets/platform_alert_dialog.dart';
 import 'package:provider/provider.dart';
 
@@ -35,7 +36,8 @@ class _RestaurantList extends State<RestaurantList> {
   Future<void> _signOut(BuildContext context) async {
     try {
       final auth = Provider.of<AuthBase>(context, listen: false);
-      await auth.signOut();    
+      await auth.signOut(); 
+      SignInPage.create(context);    
     }
     catch(e) {
       print(e.toString());

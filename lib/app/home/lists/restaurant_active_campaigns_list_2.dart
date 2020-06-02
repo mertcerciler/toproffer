@@ -30,8 +30,8 @@ class _RestaurantCampaignList extends State<RestaurantCampaignList> {
       setState(() {
         if ((duration - oneSec).inSeconds < 1) {
           checkDuration = true;
-          removeCampaign(index);
-          removeAllCampaign(index);
+          /*removeCampaign(index);
+          removeAllCampaign(index);*/
           _timerCampaign.cancel();
         } else {
           duration = duration - oneSec;
@@ -40,7 +40,7 @@ class _RestaurantCampaignList extends State<RestaurantCampaignList> {
     });
   }
 
-  removeCampaign(int index) async {
+/*  removeCampaign(int index) async {
     if (checkDuration == true) {
       await widget.database.deleteCampaign(widget.campaign[index]);
     }
@@ -50,7 +50,7 @@ class _RestaurantCampaignList extends State<RestaurantCampaignList> {
     if (checkDuration == true) {
       await widget.database.deleteAllCampaign(widget.campaign[index]);
     }
-  }
+  }*/
 
   void _navigateCampaignDetails(BuildContext context, CampaignModel campaign) {
     Navigator.of(context).push(
