@@ -4,7 +4,7 @@ import 'package:login/app/home/lists/list_item_builder.dart';
 import 'package:login/app/home/models/campaign_model.dart';
 import 'package:login/app/services/auth.dart';
 import 'package:login/app/services/database.dart';
-import 'package:login/app/sign_in/signin_page.dart';
+import 'package:login/app/user_type.dart';
 import 'package:login/common_widgets/platform_alert_dialog.dart';
 import 'package:provider/provider.dart';
 import 'lists/restaurant_active_campaigns_list_2.dart';
@@ -34,7 +34,11 @@ class _RestaurantsActiveCampaigns extends State<RestaurantsActiveCampaigns> {
     try {
       final auth = Provider.of<AuthBase>(context, listen: false);
       await auth.signOut();
-      SignInPage.create(context);
+      MaterialPageRoute(
+        builder: (_) {
+          return UserTypePage();
+        },
+      );
     } catch (e) {
       print(e.toString());
     }

@@ -37,8 +37,7 @@ class _CampaignListPage extends State<CampaignListPage> {
   Future<void> _signOut(BuildContext context) async {
     try {
       final auth = Provider.of<AuthBase>(context, listen: false);
-      await auth.signOut();  
-      SignInPage.create(context);  
+      await auth.signOut();    
     }
     catch(e) {
       print(e.toString());
