@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:login/app/home/map.dart';
 import 'package:login/app/home/models/campaign_model.dart';
 import 'package:login/app/home/restaurant_list.dart';
+import 'package:login/app/home/user_own_profile.dart';
 import 'package:login/app/services/database.dart';
 import 'package:login/app/services/auth.dart';
 import 'package:login/app/sign_in/signin_page.dart';
@@ -82,7 +83,7 @@ class _CampaignListPage extends State<CampaignListPage> {
     Navigator.of(ctx).pushReplacement(
       MaterialPageRoute(
         builder: (_) {
-          return UserProfile(database: widget.database);
+          return UserOwnProfile(database: widget.database);
         },
       ),
     );

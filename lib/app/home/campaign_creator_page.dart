@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:login/app/home/models/campaign_model.dart';
 import 'package:login/app/home/restaurant_active_campaigns.dart';
 import 'package:login/app/home/restaurant_statistics.dart';
+import 'package:login/app/home/user_own_profile.dart';
 import 'dart:async';
 import 'dart:math';
 import 'package:provider/provider.dart';
@@ -257,7 +258,7 @@ class _CampaignCreatorPage extends State<CampaignCreatorPage> {
     Navigator.of(ctx).pushReplacement(
       MaterialPageRoute(
         builder: (_) {
-          return RestaurantsActiveCampaigns(database: widget.database);
+          return RestaurantsActiveCampaigns(database: widget.database,);
         },
       ),
     );
@@ -282,7 +283,8 @@ class _CampaignCreatorPage extends State<CampaignCreatorPage> {
         selectRestaurantActiveCampaigns(context);
       } else if (_selectedIndex == 2) {
         selectStatistics(context);
-      } else if (_selectedIndex == 3) {}
+      } else if (_selectedIndex == 3) {
+      }
     });
   }
 

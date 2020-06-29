@@ -76,6 +76,8 @@ flutter:
     - assets/breakfast.jpg
     - assets/bakery.jpg
     - assets/international.jpg
+    - assets/merdo.jpeg
+    - assets/burak.jpeg
     - assets/gagamanjero.png
 
   # An image asset can refer to one or more resolution-specific "variants", see

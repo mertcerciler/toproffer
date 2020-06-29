@@ -108,7 +108,6 @@ class _MapPage extends State<MapPage> {
         polylineCoordinates.add(LatLng(point.latitude, point.longitude));
       });
     }
-    
   }
 
   @override

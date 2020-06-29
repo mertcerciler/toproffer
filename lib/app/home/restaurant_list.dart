@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:login/app/home/campaign_creator_page.dart';
 import 'package:login/app/home/campaign_list_page_2.dart';
 import 'package:login/app/home/lists/list_item_builder.dart';
+import 'package:login/app/home/user_own_profile.dart';
 import 'package:login/app/services/auth.dart';
 import 'package:login/app/services/database.dart';
 import 'package:login/app/sign_in/signin_page.dart';
@@ -81,7 +82,7 @@ void selectCampaignListPage(context) {
     Navigator.of(ctx).pushReplacement(
       MaterialPageRoute(
         builder: (_) {
-          return UserProfile(database: widget.database);
+          return UserOwnProfile(database: widget.database);
         },
       ),
     );
