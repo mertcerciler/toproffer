@@ -17,6 +17,6 @@ There are two user types in this application. One of them is Restaurants, and th
 
  Restaurants can see the details of the campaign by tapping the desired campaign from the list. They can get the campaign code by clicking the "Get Code" button. Code of the campaign is used when a customer wants to benefit from the campaign. Restaurant gives the campaign code to customer and customer enters the code to benefit the campaign. 
  
-<p display="inline"><img src="/assets/46sgku.gif?raw=true"></p>
-<p display="inline"><img src="/assets/46siau.gif?raw=true"></p>
-<p display="inline"><img src="/assets/46sjct.gif?raw=true"></p>
+<p display="inline-block"><img src="/assets/46sgku.gif?raw=true"></p>
+<p display="inline-block"><img src="/assets/46siau.gif?raw=true"></p>
+<p display="inline-block"><img src="/assets/46sjct.gif?raw=true"></p>
