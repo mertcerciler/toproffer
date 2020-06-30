@@ -6,9 +6,9 @@ Toproffer is a mobile application that allows restaurants to publish their campa
 
 ### 1. Restaurants 
 
-Restaurats are able to create two types campaigns via Toproffer. First one is permanent campaign, it is applicable on the specified days and specified hours, and valid as long as it is deleted. It is common campaign type that restaurants make. The other one is momentarily campaign, restaurants are able to create campaign that is applicable on the specified duration and campaign is deleted after the duration is finished. 
+Restaurats are able to create two types campaigns via Toproffer. First one is permanent campaign, it is applicable on the specified days and specified hours, and valid as long as it is deleted. It is common campaign type that restaurants make. The other one is momentarily campaign, restaurants are able to create campaign that is applicable on the specified duration and campaign is deleted after the duration is finished. Below gif demonstrates momentarily campaign in this application. 
 
 
 
-![alt text](http://url/to/img.png)
+!(https://github.com/mertcerciler/toproffer/tree/master/assets/46sgku.gif)
   
