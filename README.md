@@ -11,7 +11,7 @@ Restaurats are able to create two types campaigns via Toproffer. First one is pe
  
  Also, Toproffer assists restaurants by showing all the applied campaigns categorically on the graph. Campaign categories are seperated with the colors. For example, at 6 pm, there are 42 alcohol campaigns applied via Toproffer by the customers on Monday. Days can be selected from the top. Restaurants can get assist from this graph when creating a campaign.
  
- <p align="center"><img src="/assets/46siau.gifraw=true"></p>
+ <p align="center"><img src="/assets/46siau.gif?raw=true"></p>
 
 
   
