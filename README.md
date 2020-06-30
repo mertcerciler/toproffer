@@ -1,5 +1,6 @@
 # Toproffer
-<img src="/assets/logo.jpeg?raw=true">  
+<img src="/assets/logo.jpeg?raw=true" >  
+
 Toproffer is a mobile application that allows restaurants to publish their campaigns to customers and allows customers to benefit from those campaigns. Frontend of this application is implemented using **Flutter** framework and backend is **Firebase** with **Dart** programming language. 
 
 ## Technical Details
