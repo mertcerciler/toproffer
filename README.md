@@ -10,5 +10,5 @@ Restaurats are able to create two types campaigns via Toproffer. First one is pe
 
 
 
-!(https://github.com/mertcerciler/toproffer/tree/master/assets/46sgku.gif)
+![momentarily campaign](https://github.com/mertcerciler/toproffer/tree/master/assets/46sgku.gif)
   
