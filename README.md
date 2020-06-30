@@ -10,5 +10,5 @@ Restaurats are able to create two types campaigns via Toproffer. First one is pe
 
 
 
-![momentarily campaign](/assets/bakery.jpg?raw=true)
+![momentarily campaign](/assets/46sgku.gif?raw=true)
   
