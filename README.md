@@ -25,7 +25,7 @@ There are two user types in this application. One of them is Restaurants, and th
  Also, customers can see all the campaigns as list. By tapping the desired campaign in the list, they can see the details of the campaign. If they want to benefit from that campaign, they need to enter the code that restaurant provides. The example usage of the campaign application is shown in the second gif, below.   
  
  If the customer wants to see the information of the restaurant, its active and old campaigns they can search the restaurant from the restaurants tab. If they want to get notified whenever the restaurant creates a campaign, they can follow them. The example of following a campaign is shown in the third gif, below. 
- 
-<pre> <img src="/assets/46sns8.gif?raw=true">     <img  src="/assets/46sons.gif?raw=true">      <img src="/assets/46soka.gif?raw=true">  </pre>
+  
+<pre> <img src="/assets/46sns8.gif?raw=true">      <img  src="/assets/46sons.gif?raw=true">      <img src="/assets/46soka.gif?raw=true">  </pre>
 
 
