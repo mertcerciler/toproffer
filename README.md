@@ -1,10 +1,14 @@
 # Toproffer
 <img src="/assets/logo.jpeg?raw=true">  
-Toproffer is a mobile application that allows restaurants to publish their campaigns to customers and allows customers to benefit from those campaigns. Frontend of this application is implemented using **Flutter** framework and backend is **Firebase** with **Dart** language. 
+Toproffer is a mobile application that allows restaurants to publish their campaigns to customers and allows customers to benefit from those campaigns. Frontend of this application is implemented using **Flutter** framework and backend is **Firebase** with **Dart** programming language. 
+
+## Technical Details
+
+Toproffer is implemented using **Flutter** and **Google Firebase** with Dart programming language. Model View Controller **(MVC)** design pattern is used. In order to write a clean code and obey the architecture, **Blocs** are used as controller. Also, inherited widgets, namely **providers** are used to not pass around the stuff that we need all over the project, to call them just where we need, instead. Also, **Google Map API** is used to handle map feature of our project. All of the map is implemented using the Google Map API.
 
 ## Application Features 
 
-There are two user types in this application. One of them is Restaurants, and the other one is Customers.
+There are two user types in this application. One of them is Restaurant, and the other one is Customer.
 
 ### 1. Restaurants 
 
